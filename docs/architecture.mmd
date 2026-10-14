@@ -1,0 +1,36 @@
+flowchart TB
+    U["Usuario"]
+    WEB["Cliente web"]
+    GW["Entrada HTTP / API Gateway"]
+
+    subgraph CLOUD["Infraestructura cloud"]
+        VEH["Servicio de vehículos e historial"]
+        MAIN["Servicio de mantenimiento y planificación"]
+        NOTI["Servicio de notificaciones"]
+        STATS["Servicio de estadísticas"]
+
+        DB[("PostgreSQL · persistencia inicial")]
+        OBJ[("Almacenamiento de objetos")]
+        MQ[["Cola de mensajes · evolución prevista"]]
+        SCHED["Planificador de tareas"]
+    end
+
+    EMAIL["Proveedor de correo electrónico"]
+    CAL["Calendario externo · evolución prevista"]
+
+    U --> WEB
+    WEB -->|"HTTPS / JSON"| GW
+    GW -->|"HTTP / REST"| VEH
+    GW -->|"HTTP / REST"| MAIN
+    GW -->|"HTTP / REST"| STATS
+
+    VEH -->|"Datos de vehículos e historial"| DB
+    MAIN -->|"Reglas y vencimientos"| DB
+    STATS -->|"Consultas agregadas"| DB
+    VEH -->|"Fotografías y facturas"| OBJ
+
+    SCHED --> MAIN
+    MAIN -->|"Eventos de aviso"| MQ
+    MQ --> NOTI
+    NOTI -->|"API externa"| EMAIL
+    NOTI -.->|"Integración futura"| CAL
