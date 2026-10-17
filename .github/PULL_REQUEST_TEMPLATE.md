@@ -5,12 +5,19 @@ Describe brevemente qué cambia y por qué.
 Closes #
 
 ## Tipo de cambio
+
+Marca la opción que corresponda:
+
 - [ ] `feat`: nueva funcionalidad
-- [ ] `fix`: corrección de error
+- [ ] `fix`: corrección de errores
 - [ ] `docs`: documentación
-- [ ] `refactor`: refactorización
-- [ ] `test`: pruebas
-- [ ] `chore`: mantenimiento técnico
+- [ ] `refactor`: refactorización del código sin cambiar su comportamiento
+- [ ] `test`: incorporación o modificación de pruebas
+- [ ] `style`: cambios de formato sin alterar la lógica
+- [ ] `chore`: mantenimiento general
+- [ ] `perf`: mejora del rendimiento
+- [ ] `build`: cambios en la construcción o las dependencias
+- [ ] `ci`: cambios en la integración continua o automatización
 
 ## Cambios realizados
 - 
