@@ -428,7 +428,7 @@ flowchart TB
 - El servicio de estadísticas calculará los indicadores económicos.
 - PostgreSQL almacenará los datos estructurados y el almacenamiento de objetos conservará las fotografías y facturas.
 
-La representación inicial de PostgreSQL como una única instancia simplifica el entorno de desarrollo. La independencia de los servicios deberá mantenerse en sus interfaces y responsabilidades, sin presentar esta primera configuración como una arquitectura de persistencia completamente independiente por microservicio.
+En la configuración inicial de MiGaraje se utilizará una única instancia de PostgreSQL para simplificar el despliegue y el desarrollo del proyecto. Los microservicios mantendrán responsabilidades e interfaces diferenciadas, de modo que cada uno gestione la lógica de negocio correspondiente a su dominio. Esta configuración inicial no implica que cada microservicio disponga de una base de datos independiente, aunque la arquitectura podrá evolucionar hacia una mayor separación de la persistencia si las necesidades del proyecto lo requieren.
 
 ---
 
