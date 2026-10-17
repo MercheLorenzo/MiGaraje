@@ -1,5 +1,14 @@
 # 🚗 MiGaraje — Gestión inteligente del mantenimiento de vehículos
 
+**Autora:** Mercedes Lorenzo Aragón  
+**Asignatura:** Cloud Computing: Fundamentos e Infraestructuras  
+**Titulación:** Máster Universitario en Ingeniería Informática  
+**Curso académico:** 2026-2027  
+**Universidad:** Universidad de Granada (UGR)
+
+---
+
+## 1. Descripción del proyecto
 **Proyecto individual de Cloud Computing**
 
 ## 1. Descripción del proyecto
