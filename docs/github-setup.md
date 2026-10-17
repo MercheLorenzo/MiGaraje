@@ -1,6 +1,6 @@
 # Configuración de GitHub para el Hito 1
 
-Esta guía sirve como lista de comprobación. Los elementos de GitHub Projects, milestones e Issues se crean en la interfaz web; los archivos de plantilla se versionan en el repositorio.
+Los elementos de GitHub Projects, milestones e Issues se crean en la interfaz web; los archivos de plantilla se versionan en el repositorio.
 
 ## 1. Estrategia de ramas
 
@@ -15,48 +15,52 @@ Ejemplos:
 - `feat: register vehicle endpoint`
 - `test: cover maintenance due-date calculation`
 
-## 2. Milestones sugeridos
+## 2. Milestones
 
-1. `Hito 1 - Definición y arquitectura`
-2. `Hito 2 - Servicios y persistencia`
-3. `Hito 3 - Contenerización y despliegue`
-4. `Hito 4 - Pruebas, observabilidad y entrega`
+1. `M1 - Diseño y configuración`
+2. `M2 - Gestión de vehículos`
+3. `M3 - Mantenimiento y gastos`
+4. `M4 - Notificaciones, estadísticas y despliegue`
 
-Ajusta los nombres y fechas a los hitos reales de la asignatura.
+Estos son los milestones creados de momento. Se irán añadiendo más conforme se avance en el proyecto.
 
-## 3. Etiquetas sugeridas
+## 3. Etiquetas
 
-- `user-story` — historia de usuario.
-- `architecture` — arquitectura y diseño.
-- `backend` — API o lógica de backend.
-- `database` — persistencia.
-- `devops` — contenedores, CI/CD o despliegue.
-- `documentation` — documentación.
-- `testing` — pruebas.
-- `security` — seguridad y privacidad.
-- `bug` — comportamiento incorrecto.
-- `enhancement` — mejora funcional.
+- `architecture` — Arquitectura y diseño.
+- `backend` — API y lógica de negocio.
+- `bug` — Errores que hay que corregir.
+- `cloud` — Docker, infraestructura y despliegue cloud.
+- `database` — Persistencia y modelo de datos.
+- `documentation` — README, diagramas y documentación.
+- `enhancement` — Mejoras de funcionalidades existentes.
+- `priority: high` — Trabajo de prioridad alta.
+- `priority: low` — Trabajo de prioridad baja.
+- `priority: medium` — Trabajo de prioridad media.
+- `task` — Tareas técnicas o de configuración.
+- `testing` — Pruebas y validación.
+- `user-story` — Historia de usuario funcionales.
+- `security` — Seguridad y privacidad.
 
-La plantilla de historias añade automáticamente `user-story`; crea esa etiqueta en GitHub si aún no existe.
+La plantilla de historias añade automáticamente `user-story`.
 
 ## 4. Historias iniciales sugeridas
 
 Crear cada historia como un GitHub Issue usando la plantilla `.github/ISSUE_TEMPLATE/user_story.md`.
 
-1. **Registrar un vehículo:** Como propietario, quiero registrar un vehículo para centralizar sus datos.
-2. **Consultar el historial:** Como propietario, quiero registrar y consultar reparaciones para recordar qué se hizo y qué piezas se utilizaron.
-3. **Configurar mantenimiento:** Como propietario, quiero definir intervalos por fecha y kilometraje para conocer cuándo corresponde una revisión.
-4. **Detectar vencimientos:** Como propietario, quiero ver tareas próximas o vencidas para priorizar el mantenimiento.
-5. **Recibir recordatorios:** Como propietario, quiero recibir avisos anticipados para no olvidar las tareas.
-6. **Consultar gastos:** Como propietario, quiero consultar gastos por vehículo y período para controlar el coste de mantenimiento.
-7. **Desplegar servicios en contenedores:** Como desarrollador, quiero ejecutar los componentes en contenedores para disponer de un entorno reproducible.
-8. **Monitorizar la aplicación:** Como responsable técnico, quiero consultar logs y métricas para detectar errores operativos.
+1. **Registrar un vehículo:** Como usuario de MiGaraje, quiero registrar mis vehículos con sus datos principales, para mantener organizada su información en un único lugar.
+2. **Consultar los vehículos registrados:** Como usuario de MiGaraje, quiero consultar la lista de mis vehículos registrados y ver sus datos principales, para localizar rápidamente el vehículo que deseo gestionar.
+3. **Editar y eliminar un vehículo:** Como usuario de MiGaraje, quiero modificar los datos de mis vehículos y eliminar aquellos que ya no deseo gestionar, para mantener mi inventario actualizado.
+4. **Registrar reparaciones y mantenimientos:** Como usuario de MiGaraje, quiero registrar las reparaciones y operaciones de mantenimiento realizadas en mis vehículos, para conservar un registro detallado de las intervenciones y sus costes.
+5. **Consultar el historial de un vehículo:** Como usuario de MiGaraje, quiero consultar el historial de reparaciones y mantenimientos de cada vehículo, para conocer las intervenciones realizadas y su evolución a lo largo del tiempo.
+6. **Consultar los gastos de mantenimiento:** Como usuario de MiGaraje, quiero consultar los gastos asociados a las reparaciones y mantenimientos de mis vehículos, para controlar cuánto dinero destino a su conservación.
+7. **Recibir recordatorios de mantenimiento:** Como usuario de MiGaraje, quiero configurar recordatorios de mantenimiento basados en fechas o kilometrajes, para realizar las revisiones a tiempo y evitar olvidos.
+8. **Consultar estadísticas de gastos:** Como usuario de MiGaraje, quiero consultar estadísticas de los gastos de mantenimiento por vehículo, periodo y categoría, para identificar patrones de gasto y comparar los costes de conservación.
 
 Cada Issue debe tener criterios de aceptación verificables, checklist técnico, etiqueta `user-story` y el milestone correspondiente.
 
 ## 5. GitHub Projects
 
-Crear un proyecto vinculado al repositorio y añadir los Issues como elementos del backlog. Se recomienda una vista de tablero agrupada por estado y una vista de tabla agrupada por milestone. Campos útiles: `Status` (Todo, In progress, In review, Done), `Priority` y `Milestone`.
+Creado un proyecto vinculado al repositorio en el cual se han añadidido los Issues (HU) como elementos del backlog. Campos útiles: `Status` (Todo, In progress, In review, Done).
 
 ## 6. Reglas de integración
 
