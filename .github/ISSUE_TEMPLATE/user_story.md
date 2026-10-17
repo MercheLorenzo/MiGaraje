@@ -1,7 +1,7 @@
 ---
 name: Historia de usuario
 about: Registrar una funcionalidad desde la perspectiva del usuario
-title: "US: "
+title: "HU: "
 labels: ["user-story"]
 assignees: []
 ---
