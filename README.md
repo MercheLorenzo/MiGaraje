@@ -576,18 +576,24 @@ Además de las funcionalidades descritas, MiGaraje deberá cumplir los siguiente
 
 ## 10. Alcance inicial del proyecto
 
-Para mantener el proyecto dentro de un alcance viable, se priorizarán las siguientes funcionalidades:
+El alcance inicial de MiGaraje comprende el desarrollo de un sistema backend distribuido, acompañado de la infraestructura necesaria para su ejecución, despliegue y operación en la nube. Las funcionalidades de negocio servirán como base para aplicar los conceptos de Cloud Computing a lo largo de los distintos hitos de la asignatura.
 
-1. Registro y gestión de vehículos.
-2. Registro de reparaciones e intervenciones con kilometraje y costes.
-3. Configuración de reglas de mantenimiento por fecha y kilometraje.
-4. Cálculo automático de tareas próximas y vencidas.
-5. Generación y envío de recordatorios por correo electrónico.
-6. Consulta de gastos por vehículo y período.
-7. Contenerización de los componentes y despliegue de la aplicación en la nube.
-8. Documentación, pruebas y monitorización básica.
+Se priorizarán los siguientes elementos:
 
-La integración completa con calendarios externos, los planes comerciales, la gestión avanzada de flotas y las funciones de intermediación entre proveedores cloud se consideran posibles ampliaciones, no requisitos imprescindibles de la primera versión.
+1. **Funcionalidades de negocio:** gestión de vehículos, registro de intervenciones de mantenimiento y consulta de gastos.
+2. **Arquitectura backend:** diseño e implementación de microservicios con responsabilidades diferenciadas, expuestos mediante APIs REST.
+3. **Persistencia:** almacenamiento de la información en PostgreSQL y definición de los mecanismos de acceso a los datos.
+4. **Contenerización y entorno local:** empaquetado de los componentes mediante Docker y configuración de un entorno reproducible.
+5. **Integración continua:** automatización de la validación y las pruebas del código.
+6. **Infraestructura como código:** definición y aprovisionamiento automatizado de los recursos necesarios para ejecutar el sistema.
+7. **Despliegue continuo y seguridad:** automatización de despliegues y aplicación de medidas de seguridad en los componentes y procesos.
+8. **Observabilidad y rendimiento:** registro de eventos, monitorización y pruebas de carga para evaluar el comportamiento del sistema.
+
+El frontend no constituye una prioridad en el alcance inicial. La interacción con el sistema podrá realizarse mediante las APIs REST y herramientas de documentación y prueba, como Swagger UI, incorporando una interfaz gráfica sencilla únicamente si resulta necesaria.
+
+Las funcionalidades avanzadas de mantenimiento, las notificaciones por correo electrónico, la integración con calendarios externos y la gestión de flotas se considerarán ampliaciones sujetas al tiempo disponible y a las necesidades de los hitos técnicos.
+
+La implementación se realizará de forma progresiva, ajustando el alcance funcional para garantizar que los objetivos de arquitectura, automatización, despliegue, seguridad y observabilidad puedan verificarse.
 
 ---
 
