@@ -1,4 +1,8 @@
-# 🚗 MiGaraje — Gestión inteligente del mantenimiento de vehículos
+<p align="center">
+  <img src="MiGaraje.png" alt="Logo de MiGaraje" width="200">
+</p>
+
+# MiGaraje — Gestión inteligente del mantenimiento de vehículos
 
 **Autora:** Mercedes Lorenzo Aragón  
 **Asignatura:** Cloud Computing: Fundamentos e Infraestructuras  
