@@ -55,6 +55,8 @@ Crear cada historia como un GitHub Issue usando la plantilla `.github/ISSUE_TEMP
 6. **Consultar los gastos de mantenimiento:** Como usuario de MiGaraje, quiero consultar los gastos asociados a las reparaciones y mantenimientos de mis vehículos, para controlar cuánto dinero destino a su conservación.
 7. **Recibir recordatorios de mantenimiento:** Como usuario de MiGaraje, quiero configurar recordatorios de mantenimiento basados en fechas o kilometrajes, para realizar las revisiones a tiempo y evitar olvidos.
 8. **Consultar estadísticas de gastos:** Como usuario de MiGaraje, quiero consultar estadísticas de los gastos de mantenimiento por vehículo, periodo y categoría, para identificar patrones de gasto y comparar los costes de conservación.
+9. **Desplegar servicios en contenedores:** Como desarrollador, quiero ejecutar los componentes de MiGaraje en contenedores para disponer de un entorno reproducible y facilitar su despliegue.
+10. **Monitorizar la aplicación:** Como responsable técnico, quiero consultar los registros (logs) y las métricas de MiGaraje para detectar errores operativos y evaluar el funcionamiento de los servicios.
 
 Cada Issue debe tener criterios de aceptación verificables, checklist técnico, etiqueta `user-story` y el milestone correspondiente.
 
