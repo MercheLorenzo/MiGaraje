@@ -137,8 +137,6 @@ Las estadísticas se calcularán a partir de los registros económicos del histo
 
 MiGaraje estará orientado principalmente a particulares que poseen uno o varios vehículos y desean organizar su mantenimiento de forma sencilla.
 
-También podría resultar útil para usuarios con motocicletas, furgonetas o pequeños conjuntos de vehículos familiares.
-
 En una posible evolución futura, la aplicación podría ampliarse para ofrecer funcionalidades a pequeños negocios con flotas reducidas.
 
 ### 3.2. Propuesta de valor
