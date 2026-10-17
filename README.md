@@ -9,9 +9,6 @@
 ---
 
 ## 1. Descripción del proyecto
-**Proyecto individual de Cloud Computing**
-
-## 1. Descripción del proyecto
 
 ### 1.1. Contexto y problemática
 
