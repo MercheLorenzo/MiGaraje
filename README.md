@@ -8,6 +8,59 @@
 
 ---
 
+## Índice
+
+- [1. Descripción del proyecto](#1-descripción-del-proyecto)
+  - [1.1. Contexto y problemática](#11-contexto-y-problemática)
+  - [1.2. Solución propuesta](#12-solución-propuesta)
+  - [1.3. Objetivo general](#13-objetivo-general)
+  - [1.4. Objetivos específicos](#14-objetivos-específicos)
+- [2. Funcionalidades principales](#2-funcionalidades-principales)
+  - [2.1. Gestión del garaje](#21-gestión-del-garaje)
+  - [2.2. Historial de reparaciones e intervenciones](#22-historial-de-reparaciones-e-intervenciones)
+  - [2.3. Planificación de mantenimientos](#23-planificación-de-mantenimientos)
+  - [2.4. Calendario y notificaciones](#24-calendario-y-notificaciones)
+  - [2.5. Gastos y estadísticas](#25-gastos-y-estadísticas)
+- [3. Modelo de negocio y propuesta de valor](#3-modelo-de-negocio-y-propuesta-de-valor)
+  - [3.1. Usuarios objetivo](#31-usuarios-objetivo)
+  - [3.2. Propuesta de valor](#32-propuesta-de-valor)
+  - [3.3. Modelo de explotación potencial](#33-modelo-de-explotación-potencial)
+- [4. Arquitectura de referencia](#4-arquitectura-de-referencia)
+  - [4.1. Enfoque arquitectónico](#41-enfoque-arquitectónico)
+  - [4.2. Tecnologías propuestas](#42-tecnologías-propuestas)
+  - [4.3. Comunicación entre componentes](#43-comunicación-entre-componentes)
+  - [4.4. Persistencia y propiedad de los datos](#44-persistencia-y-propiedad-de-los-datos)
+  - [4.5. Despliegue y escalabilidad](#45-despliegue-y-escalabilidad)
+- [5. Justificación según NIST SP 800-145](#5-justificación-según-nist-sp-800-145)
+  - [5.1. Autoservicio bajo demanda](#51-autoservicio-bajo-demanda-on-demand-self-service)
+  - [5.2. Acceso amplio a la red](#52-acceso-amplio-a-la-red-broad-network-access)
+  - [5.3. Asignación común de recursos](#53-asignación-común-de-recursos-resource-pooling)
+  - [5.4. Rápida elasticidad](#54-rápida-elasticidad-rapid-elasticity)
+  - [5.5. Servicio medido](#55-servicio-medido-measured-service)
+  - [5.6. Modelo de servicio cloud](#56-modelo-de-servicio-cloud)
+  - [5.7. Modelo de despliegue](#57-modelo-de-despliegue)
+- [6. Actores del modelo de referencia NIST SP 500-292](#6-actores-del-modelo-de-referencia-nist-sp-500-292)
+  - [6.1. Consumidor de servicios cloud](#61-consumidor-de-servicios-cloud-cloud-consumer)
+  - [6.2. Proveedor de servicios cloud](#62-proveedor-de-servicios-cloud-cloud-provider)
+  - [6.3. Intermediario cloud](#63-intermediario-cloud-cloud-broker)
+  - [6.4. Auditor cloud](#64-auditor-cloud-cloud-auditor)
+  - [6.5. Operador de transporte cloud](#65-operador-de-transporte-cloud-cloud-carrier)
+  - [6.6. Resumen del mapeo de actores](#66-resumen-del-mapeo-de-actores)
+- [7. Diagrama de arquitectura](#7-diagrama-de-arquitectura)
+  - [7.1. Interpretación del diagrama](#71-interpretación-del-diagrama)
+- [8. Especificación inicial de las API REST](#8-especificación-inicial-de-las-api-rest)
+  - [8.1. Servicio de vehículos e historial](#81-servicio-de-vehículos-e-historial)
+  - [8.2. Servicio de mantenimiento y planificación](#82-servicio-de-mantenimiento-y-planificación)
+  - [8.3. Servicio de notificaciones](#83-servicio-de-notificaciones)
+  - [8.4. Servicio de estadísticas](#84-servicio-de-estadísticas)
+  - [8.5. Criterios comunes de las API](#85-criterios-comunes-de-las-api)
+- [9. Requisitos no funcionales](#9-requisitos-no-funcionales)
+- [10. Alcance inicial del proyecto](#10-alcance-inicial-del-proyecto)
+- [11. Gestión de ingeniería de software](#11-gestión-de-ingeniería-de-software)
+- [12. Referencias](#12-referencias)
+  
+---
+
 ## 1. Descripción del proyecto
 
 ### 1.1. Contexto y problemática
