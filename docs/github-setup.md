@@ -43,7 +43,7 @@ Estos son los milestones creados de momento. Se irán añadiendo más conforme s
 
 La plantilla de historias añade automáticamente `user-story`.
 
-## 4. Historias iniciales sugeridas
+## 4. Historias de usuario (Issues) iniciales
 
 Crear cada historia como un GitHub Issue usando la plantilla `.github/ISSUE_TEMPLATE/user_story.md`.
 
