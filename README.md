@@ -51,6 +51,8 @@ Diseñar e implementar una aplicación cloud-native basada en microservicios que
 - Desarrollar servicios independientes, contenerizados y desplegables en la nube.
 - Aplicar principios de seguridad, persistencia, escalabilidad y observabilidad propios de una aplicación cloud-native.
 
+---
+
 ## 2. Funcionalidades principales
 
 ### 2.1. Gestión del garaje
@@ -130,6 +132,8 @@ Se contemplarán las siguientes consultas:
 
 Las estadísticas se calcularán a partir de los registros económicos del historial, evitando mantener duplicados innecesarios de los mismos importes.
 
+---
+
 ## 3. Modelo de negocio y propuesta de valor
 
 ### 3.1. Usuarios objetivo
@@ -157,6 +161,8 @@ Como hipótesis de negocio, la aplicación podría ofrecer un modelo *freemium*:
 - **Plan prémium:** varios vehículos, mayor capacidad de almacenamiento documental, notificaciones avanzadas, integraciones con calendarios y estadísticas ampliadas.
 
 Este modelo permitiría estudiar la viabilidad económica de la solución en una futura evolución. No constituye una funcionalidad obligatoria de la primera versión del proyecto.
+
+---
 
 ## 4. Arquitectura de referencia
 
@@ -238,6 +244,8 @@ La arquitectura permitirá escalar los componentes de forma diferenciada. Por ej
 
 La base de datos, el almacenamiento documental y los servicios de terceros se tratarán como dependencias que requieren configuración, protección de credenciales, monitorización y políticas de recuperación.
 
+---
+
 ## 5. Justificación según NIST SP 800-145
 
 El documento NIST SP 800-145 define la computación en la nube mediante cinco características esenciales. MiGaraje aprovechará estas características mediante el despliegue de sus servicios en una infraestructura cloud y la automatización de su operación.
@@ -302,6 +310,8 @@ Como primera opción se contempla una nube pública, utilizando servicios gestio
 
 Este modelo permite reducir la carga de administración de la infraestructura y facilita el aprovisionamiento de recursos. No obstante, la selección final deberá tener en cuenta los límites gratuitos, los costes de operación, las políticas de seguridad y las condiciones de disponibilidad del proveedor.
 
+---
+
 ## 6. Actores del modelo de referencia NIST SP 500-292
 
 El NIST SP 500-292 establece cinco actores principales en su arquitectura de referencia: consumidor, proveedor, intermediario, auditor y operador de transporte (*cloud carrier*).
@@ -364,6 +374,8 @@ En el escenario propuesto, la conexión se realizará a través de Internet y de
 
 Referencia: Liu, F. et al. (2011). *NIST Cloud Computing Reference Architecture*. NIST Special Publication 500-292.
 
+---
+
 ## 7. Diagrama de arquitectura
 
 El siguiente diagrama representa la arquitectura lógica de referencia prevista para MiGaraje. Describe los componentes y sus relaciones; no implica que todos estén implementados en la primera entrega.
@@ -422,6 +434,8 @@ flowchart TB
 - PostgreSQL almacenará los datos estructurados y el almacenamiento de objetos conservará las fotografías y facturas.
 
 La representación inicial de PostgreSQL como una única instancia simplifica el entorno de desarrollo. La independencia de los servicios deberá mantenerse en sus interfaces y responsabilidades, sin presentar esta primera configuración como una arquitectura de persistencia completamente independiente por microservicio.
+
+---
 
 ## 8. Especificación inicial de las API REST
 
@@ -547,6 +561,8 @@ Las API seguirán las siguientes convenciones:
 
 Las rutas internas entre microservicios podrán ser diferentes de las rutas públicas expuestas a través del API Gateway.
 
+---
+
 ## 9. Requisitos no funcionales
 
 Además de las funcionalidades descritas, MiGaraje deberá cumplir los siguientes requisitos:
@@ -560,6 +576,8 @@ Además de las funcionalidades descritas, MiGaraje deberá cumplir los siguiente
 - **Integridad:** validación de kilometrajes, fechas, importes y relaciones entre vehículos e intervenciones.
 - **Persistencia:** conservación de los registros y establecimiento de procedimientos de copia de seguridad y recuperación.
 - **Eficiencia económica:** elección de servicios cloud acordes con el alcance del proyecto y seguimiento de los costes de operación.
+
+---
 
 ## 10. Alcance inicial del proyecto
 
@@ -576,6 +594,8 @@ Para mantener el proyecto dentro de un alcance viable, se priorizarán las sigui
 
 La integración completa con calendarios externos, los planes comerciales, la gestión avanzada de flotas y las funciones de intermediación entre proveedores cloud se consideran posibles ampliaciones, no requisitos imprescindibles de la primera versión.
 
+---
+
 ## 11. Gestión de ingeniería de software
 
 El desarrollo se gestionará mediante Git y GitHub, utilizando un enfoque incremental basado en historias de usuario, tareas técnicas y entregas verificables.
@@ -591,6 +611,8 @@ Se adoptarán las siguientes convenciones:
 - **Pruebas automatizadas:** comprobarán la lógica de negocio y el comportamiento de las API.
 
 La estructura de gestión se configurará progresivamente durante el Hito 1 y servirá como base para las siguientes fases de desarrollo.
+
+---
 
 ## 12. Referencias
 
