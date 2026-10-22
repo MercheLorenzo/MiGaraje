@@ -29,6 +29,23 @@ services:
       vehicles-service:
         condition: service_started
     restart: unless-stopped
+  
+  maintenance-planning-service:
+    build:
+      context: ./services/maintenance-planning-service
+    container_name: migaraje-maintenance-planning-service
+    environment:
+      APP_NAME: "MiGaraje Maintenance Planning Service"
+      DATABASE_URL: ${PLANNING_DATABASE_URL}
+      VEHICLES_SERVICE_URL: ${VEHICLES_SERVICE_URL}
+    ports:
+      - "8002:8002"
+    depends_on:
+      db:
+        condition: service_healthy
+      vehicles-service:
+        condition: service_started
+    restart: unless-stopped
 
   db:
     image: postgres:17
