@@ -1,0 +1,207 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="description"
+        content="MiGaraje: historial y planificación del mantenimiento de tus vehículos"
+    >
+
+    <title>MiGaraje | Tu vehículo, siempre al día</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Cabecera y navegación -->
+    <header>
+        <div class="wrap nav">
+            <a class="brand" href="#" aria-label="MiGaraje, inicio">
+                <img src="MiGaraje.png" alt="Logo de MiGaraje">
+                <span>MiGaraje</span>
+            </a>
+
+            <nav class="links" aria-label="Navegación principal">
+                <a href="#servicios">Servicios</a>
+                <a href="#sobre">Qué puedes hacer</a>
+                <a class="btn navbtn" href="#servicios">
+                    Entrar <span>↗</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Presentación principal -->
+        <section class="hero">
+            <div class="wrap hero-grid">
+                <div>
+                    <div class="pill">
+                        <span class="dot"></span>
+                        Tu vehículo, siempre al día
+                    </div>
+
+                    <h1>
+                        Cuida tu coche.<br>
+                        <em>No olvides nada.</em>
+                    </h1>
+
+                    <p>
+                        Guarda el historial de tus mantenimientos, controla
+                        tus gastos y planifica las próximas revisiones.
+                        Todo lo que tu vehículo necesita, en un solo lugar.
+                    </p>
+
+                    <div class="actions">
+                        <a class="btn" href="#servicios">
+                            Explorar servicios <span>→</span>
+                        </a>
+
+                        <a class="btn light" href="#sobre">
+                            Descubrir MiGaraje
+                        </a>
+                    </div>
+
+                    <div class="note">
+                        Más organización para ti. Más cuidado para tu vehículo.
+                    </div>
+                </div>
+
+                <!-- Logotipo destacado -->
+                <div class="logo-stage">
+                    <div class="halo"></div>
+
+                    <div class="logo-card">
+                        <img
+                            src="MiGaraje.png"
+                            alt="Logotipo de MiGaraje: garaje, coche y llave inglesa"
+                        >
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Acceso a los microservicios -->
+        <section class="section" id="servicios">
+            <div class="wrap">
+                <div class="heading">
+                    <div class="kicker">Tu garaje digital</div>
+
+                    <h2>¿Qué necesitas hacer hoy?</h2>
+
+                    <p>
+                        Accede directamente al servicio que necesitas.
+                        Cada módulo se ocupa de una parte de la gestión
+                        de tu vehículo.
+                    </p>
+                </div>
+
+                <div class="cards">
+                    <!-- Servicio de vehículos -->
+                    <article class="card">
+                        <div class="ico" aria-hidden="true">🚘</div>
+
+                        <h3>Vehículos</h3>
+
+                        <p>
+                            Registra tus vehículos y consulta sus datos
+                            para tener toda la información básica organizada.
+                        </p>
+
+                        <a
+                            class="card-link"
+                            href="http://localhost:8000/docs"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Abrir servicio →
+                        </a>
+
+                        <span class="url">API · localhost:8000</span>
+                    </article>
+
+                    <!-- Servicio de mantenimientos -->
+                    <article class="card">
+                        <div class="ico" aria-hidden="true">🔧</div>
+
+                        <h3>Mantenimientos</h3>
+
+                        <p>
+                            Registra reparaciones e intervenciones con fecha,
+                            kilometraje, detalles y coste.
+                        </p>
+
+                        <a
+                            class="card-link"
+                            href="http://localhost:8001/docs"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Abrir servicio →
+                        </a>
+
+                        <span class="url">API · localhost:8001</span>
+                    </article>
+
+                    <!-- Servicio de planificación -->
+                    <article class="card">
+                        <div class="ico" aria-hidden="true">🗓️</div>
+
+                        <h3>Planificación</h3>
+
+                        <p>
+                            Define reglas de mantenimiento y organiza
+                            las próximas tareas por fecha o kilometraje.
+                        </p>
+
+                        <a
+                            class="card-link"
+                            href="http://localhost:8002/docs"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Abrir servicio →
+                        </a>
+
+                        <span class="url">API · localhost:8002</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Llamada a la acción -->
+        <section class="band" id="sobre">
+            <div class="wrap">
+                <div class="band-inner">
+                    <div>
+                        <h2>El mantenimiento, bajo control.</h2>
+
+                        <p>
+                            Consulta lo que has hecho y prepara lo que viene
+                            después.
+                        </p>
+                    </div>
+
+                    <a class="btn" href="#servicios">
+                        Empezar ahora →
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Pie de página -->
+    <footer>
+        <div class="wrap foot">
+            <strong>MiGaraje</strong>
+
+            <span>Cuida tu vehículo, sin olvidos.</span>
+
+            <span>Proyecto académico · Cloud Computing</span>
+        </div>
+    </footer>
+</body>
+</html>
+```
