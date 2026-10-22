@@ -1,15 +1,22 @@
 from datetime import date
 from decimal import Decimal
-
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
+from unittest.mock import MagicMock
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.db.session import Base, get_db
 from app.main import app
-
+from app.services import maintenance_service
+from app.clients.vehicles_client import (
+    VehicleNotFoundError,
+    VehicleServiceUnavailableError,
+)
+from app import main as main_module
 
 test_engine = create_engine(
     "sqlite://",
@@ -33,12 +40,21 @@ def override_get_db():
 
 
 @pytest.fixture
-def client():
+def client(monkeypatch):
     Base.metadata.drop_all(bind=test_engine)
     Base.metadata.create_all(bind=test_engine)
+
     app.dependency_overrides[get_db] = override_get_db
 
+    # Por defecto, simulamos que todos los vehículos existen.
+    monkeypatch.setattr(
+        maintenance_service,
+        "verify_vehicle_exists",
+        vehicle_exists,
+    )
+
     test_client = TestClient(app)
+
     try:
         yield test_client
     finally:
@@ -212,3 +228,112 @@ def test_health_endpoint(client):
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+
+def vehicle_exists(vehicle_id: int) -> None:
+    """Simula que el vehículo existe en vehicles-service."""
+    return None
+
+
+def vehicle_not_found(vehicle_id: int) -> None:
+    """Simula que vehicles-service no encuentra el vehículo."""
+    raise VehicleNotFoundError
+
+
+def vehicles_service_unavailable(vehicle_id: int) -> None:
+    """Simula que vehicles-service no está disponible."""
+    raise VehicleServiceUnavailableError
+
+def test_create_maintenance_with_existing_vehicle(client):
+    response = client.post(
+        "/maintenances",
+        json=maintenance_payload(vehicle_id=1),
+    )
+
+    assert response.status_code == 201
+    assert response.json()["vehicle_id"] == 1
+
+
+def test_create_maintenance_with_nonexistent_vehicle(
+    client,
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        maintenance_service,
+        "verify_vehicle_exists",
+        vehicle_not_found,
+    )
+
+    response = client.post(
+        "/maintenances",
+        json=maintenance_payload(vehicle_id=9999),
+    )
+
+    assert response.status_code == 422
+
+
+def test_create_maintenance_when_vehicles_service_is_unavailable(
+    client,
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        maintenance_service,
+        "verify_vehicle_exists",
+        vehicles_service_unavailable,
+    )
+
+    response = client.post(
+        "/maintenances",
+        json=maintenance_payload(vehicle_id=1),
+    )
+
+    assert response.status_code == 503
+
+def test_health_live_endpoint(client):
+    response = client.get("/health/live")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "ok",
+        "service": "maintenance-service",
+    }
+
+
+def test_health_ready_endpoint(client, monkeypatch):
+    mock_connection = MagicMock()
+    monkeypatch.setattr(
+        main_module.engine,
+        "connect",
+        lambda: mock_connection,
+    )
+
+    response = client.get("/health/ready")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "ok",
+        "service": "maintenance-service",
+        "database": "ok",
+    }
+
+
+def test_health_ready_when_database_is_unavailable(
+    client,
+    monkeypatch,
+):
+    def raise_database_error():
+        raise SQLAlchemyError("Database unavailable")
+
+    monkeypatch.setattr(
+        main_module.engine,
+        "connect",
+        raise_database_error,
+    )
+
+    response = client.get("/health/ready")
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == {
+        "status": "error",
+        "service": "maintenance-service",
+        "database": "unavailable",
+    }

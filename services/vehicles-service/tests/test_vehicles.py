@@ -3,10 +3,12 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
+from unittest.mock import MagicMock
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.db.session import Base, get_db
 from app.main import app
-
+from app import main as main_module
 
 # Base de datos SQLite independiente, mantenida en memoria.
 TEST_DATABASE_URL = "sqlite://"
@@ -34,26 +36,19 @@ def override_get_db():
 
 @pytest.fixture
 def client():
-    # Crea un esquema limpio para cada prueba.
+    # crea un esquema limpio para cada prueba
     Base.metadata.drop_all(bind=test_engine)
     Base.metadata.create_all(bind=test_engine)
 
     app.dependency_overrides[get_db] = override_get_db
-
-    # No usamos el context manager para evitar ejecutar el
-    # lifespan de la aplicación, que crea tablas en la BD normal.
-    #with TestClient(app) as test_client:
-        #yield test_client
-    
     test_client = TestClient(app)
+
     try:
         yield test_client
     finally:
         test_client.close()
-
-    app.dependency_overrides.clear()
-    Base.metadata.drop_all(bind=test_engine)
-
+        app.dependency_overrides.clear()
+        Base.metadata.drop_all(bind=test_engine)
 
 def vehicle_payload(**overrides):
     data = {
@@ -213,3 +208,49 @@ def test_health_endpoint(client):
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
+
+def test_health_live_endpoint(client):
+    response = client.get("/health/live")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+def test_health_ready_endpoint(client, monkeypatch):
+    mock_connection = MagicMock()
+    monkeypatch.setattr(
+        main_module.engine,
+        "connect",
+        lambda: mock_connection,
+    )
+
+    response = client.get("/health/ready")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "ok",
+        "service": "vehicles-service",
+        "database": "ok",
+    }
+
+
+def test_health_ready_when_database_is_unavailable(
+    client,
+    monkeypatch,
+):
+    def raise_database_error():
+        raise SQLAlchemyError("Database unavailable")
+
+    monkeypatch.setattr(
+        main_module.engine,
+        "connect",
+        raise_database_error,
+    )
+
+    response = client.get("/health/ready")
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == {
+        "status": "error",
+        "service": "vehicles-service",
+        "database": "unavailable",
+    }
