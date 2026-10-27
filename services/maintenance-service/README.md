@@ -161,14 +161,14 @@ Con el servicio ejecutándose y el puerto publicado en la configuración de Dock
 
 La API permite realizar las siguientes operaciones sobre las intervenciones:
 
-| Método HTTP | Operación |
-|---|---|
-| `POST` | Registrar una intervención de mantenimiento. |
-| `GET` | Consultar las intervenciones registradas. |
-| `GET` | Consultar una intervención por su identificador. |
-| `GET` | Consultar las intervenciones asociadas a un vehículo. |
-| `PUT` | Actualizar una intervención. |
-| `DELETE` | Eliminar una intervención. |
+| Método HTTP | Ruta | Operación |
+|---|---|---|
+| `POST` | `/maintenances` | Registrar una intervención de mantenimiento. |
+| `GET` | `/maintenances` | Consultar las intervenciones registradas. |
+| `GET` | `/maintenances/{maintenance_id}` | Consultar una intervención por su identificador. |
+| `GET` | `/maintenances/vehicle/{vehicle_id}` | Consultar las intervenciones asociadas a un vehículo. |
+| `PUT` | `/maintenances/{maintenance_id}` | Actualizar una intervención. |
+| `DELETE` | `/maintenances/{maintenance_id}` | Eliminar una intervención. |
 
 Para consultar las rutas exactas, sus parámetros y los códigos de respuesta, accede a `http://localhost:8001/docs`. Esta documentación interactiva refleja los endpoints registrados por FastAPI.
 
