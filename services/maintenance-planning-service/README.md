@@ -190,13 +190,13 @@ La API proporciona operaciones relacionadas con las reglas y las tareas de mante
 
 Entre las operaciones previstas para las reglas se encuentran:
 
-| Método HTTP | Operación |
-|---|---|
-| `POST` | Crear una regla de mantenimiento. |
-| `GET` | Consultar las reglas de mantenimiento. |
-| `GET` | Consultar una regla por su identificador. |
-| `PUT` | Actualizar una regla de mantenimiento. |
-| `DELETE` | Eliminar una regla de mantenimiento. |
+| Método HTTP | Rutas | Operación |
+|---|---|---|
+| `POST` | `/maintenance-rules` | Crear una regla de mantenimiento. |
+| `GET` | `/maintenance-rules` | Consultar las reglas de mantenimiento. |
+| `GET` | `/maintenance-rules/{rule_id}` | Consultar una regla por su identificador. |
+| `PUT` | `/maintenance-rules/{rule_id}` | Actualizar una regla de mantenimiento. |
+| `DELETE` | `/maintenance-rules/{rule_id}` | Eliminar una regla de mantenimiento. |
 
 El servicio también contempla operaciones sobre las tareas de mantenimiento.
 
