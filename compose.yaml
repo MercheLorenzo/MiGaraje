@@ -1,4 +1,24 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      target: development
+    container_name: migaraje-frontend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app
+    restart: unless-stopped
+
+  frontend-production:
+    build:
+      context: ./frontend
+      target: production
+    container_name: migaraje-frontend-production
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+
   vehicles-service:
     build:
       context: ./services/vehicles-service
