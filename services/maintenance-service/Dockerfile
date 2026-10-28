@@ -26,8 +26,10 @@ RUN groupadd --system app \
 # Copy installed dependencies from the builder stage
 COPY --from=builder /install /usr/local
 
-# Copy application code
+# Copy application code and db migrations
 COPY --chown=app:app app/ ./app/
+COPY --chown=app:app alembic.ini .
+COPY --chown=app:app alembic/ ./alembic/
 
 # Run the application without root privileges
 USER app
