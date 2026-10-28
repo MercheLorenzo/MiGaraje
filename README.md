@@ -61,7 +61,8 @@
 - [9. Requisitos no funcionales](#9-requisitos-no-funcionales)
 - [10. Alcance inicial del proyecto](#10-alcance-inicial-del-proyecto)
 - [11. Gestión de ingeniería de software](#11-gestión-de-ingeniería-de-software)
-- [12. Referencias](#12-referencias)
+- [12. Configuración del entorno](#12-configuración-del-entorno)
+- [13. Referencias](#13-referencias)
   
 ---
 
@@ -672,7 +673,73 @@ La estructura de gestión se configurará progresivamente durante el Hito 1 y se
 
 ---
 
-## 12. Referencias
+## 12. Configuración del entorno
+
+MiGaraje utiliza variables de entorno para configurar PostgreSQL y establecer la conexión entre los microservicios. Docker Compose obtiene esta configuración del archivo `.env`, ubicado en la raíz del repositorio.
+
+### 12.1. Preparación del entorno local
+
+Antes de arrancar la aplicación, es necesario crear un archivo `.env` a partir de la plantilla `.env.example`.
+
+Desde PowerShell, en el directorio raíz del proyecto, se puede ejecutar:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Si ya existe un archivo `.env`, no debe sobrescribirse sin guardar previamente su configuración.
+
+Una vez creado, se debe editar `.env` y configurar una contraseña local para PostgreSQL. La contraseña debe coincidir con la utilizada en las URL de conexión de los microservicios.
+
+### 12.2. Variables de entorno
+
+El archivo `.env.example` documenta las variables necesarias para configurar el entorno:
+
+| Variable | Descripción |
+|---|---|
+| `POSTGRES_DB` | Nombre de la base de datos inicial de PostgreSQL. |
+| `POSTGRES_USER` | Usuario utilizado para acceder a PostgreSQL. |
+| `POSTGRES_PASSWORD` | Contraseña configurada para PostgreSQL. |
+| `DATABASE_URL` | URL de conexión a la base de datos original, conservada como configuración heredada. |
+| `VEHICLES_DATABASE_URL` | URL de conexión a la base de datos del servicio de vehículos. |
+| `MAINTENANCE_DATABASE_URL` | URL de conexión a la base de datos del servicio de mantenimiento. |
+| `PLANNING_DATABASE_URL` | URL de conexión a la base de datos del servicio de planificación. |
+| `VEHICLES_SERVICE_URL` | Dirección interna del servicio de vehículos, utilizada por otros microservicios. |
+| `PLANNING_SERVICE_URL` | Dirección interna del servicio de planificación, disponible como variable de configuración. |
+
+Las URL de conexión utilizan el nombre `db` y el puerto `5432` para acceder a PostgreSQL desde la red interna de Docker Compose. Para la comunicación entre microservicios se utilizan los nombres de los servicios definidos en `compose.yaml`.
+
+### 12.3. Arranque de la aplicación
+
+Una vez preparado el archivo `.env`, se pueden construir las imágenes y arrancar los servicios mediante:
+
+```powershell
+docker compose up --build -d
+```
+
+Para comprobar el estado de los contenedores:
+
+```powershell
+docker compose ps
+```
+
+Para consultar los registros de los servicios:
+
+```powershell
+docker compose logs -f
+```
+
+### 12.4. Protección de credenciales
+
+El archivo `.env` contiene la configuración local y está excluido del control de versiones mediante `.gitignore`. No debe subirse al repositorio si contiene contraseñas u otros datos sensibles.
+
+El archivo `.env.example` se incluye en el repositorio como plantilla de configuración y utiliza valores ficticios que deben sustituirse al preparar el entorno local.
+
+No deben incluirse contraseñas reales, tokens ni otras credenciales sensibles en archivos versionados.
+
+---
+
+## 13. Referencias
 
 - Mell, P. y Grance, T. (2011). *The NIST Definition of Cloud Computing*. NIST Special Publication 800-145. National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-145
 - Liu, F., Tong, J., Mao, J., Bohn, R., Messina, J., Badger, L. y Leaf, D. (2011). *NIST Cloud Computing Reference Architecture*. NIST Special Publication 500-292. National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.500-292
