@@ -9,6 +9,8 @@ services:
     volumes:
       - ./frontend:/app
     restart: unless-stopped
+    networks:
+      - migaraje-network
 
   frontend-production:
     build:
@@ -18,6 +20,8 @@ services:
     ports:
       - "8081:80"
     restart: unless-stopped
+    networks:
+      - migaraje-network
 
   vehicles-service:
     build:
@@ -31,7 +35,19 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
+    networks:
+      - migaraje-network
   
   maintenance-service:
     build:
@@ -47,8 +63,10 @@ services:
       db:
         condition: service_healthy
       vehicles-service:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
+    networks:
+      - migaraje-network
   
   maintenance-planning-service:
     build:
@@ -64,8 +82,10 @@ services:
       db:
         condition: service_healthy
       vehicles-service:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
+    networks:
+      - migaraje-network
 
   db:
     image: postgres:17
@@ -84,6 +104,12 @@ services:
       timeout: 5s
       retries: 10
     restart: unless-stopped
+    networks:
+      - migaraje-network
 
 volumes:
   postgres_data:
+
+networks:
+  migaraje-network:
+    driver: bridge
