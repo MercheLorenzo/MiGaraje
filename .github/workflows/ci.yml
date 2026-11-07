@@ -55,6 +55,7 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -v
+
   lint-dockerfiles:
     name: Hadolint - ${{ matrix.dockerfile }}
     runs-on: ubuntu-latest
@@ -77,3 +78,31 @@ jobs:
         with:
           dockerfile: ${{ matrix.dockerfile }}
           failure-threshold: warning
+  
+  build-images:
+    name: Build Docker image - ${{ matrix.image.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - name: vehicles-service
+            context: ./services/vehicles-service
+          - name: maintenance-service
+            context: ./services/maintenance-service
+          - name: maintenance-planning-service
+            context: ./services/maintenance-planning-service
+          - name: frontend
+            context: ./frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            --target production \
+            -t migaraje-${{ matrix.image.name }}:ci \
+            ${{ matrix.image.context }}
