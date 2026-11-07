@@ -106,3 +106,52 @@ jobs:
             --target production \
             -t migaraje-${{ matrix.image.name }}:ci \
             ${{ matrix.image.context }}
+    integration-tests:
+    name: Integration tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Configure test environment
+        run: |
+          cat > .env <<'EOF'
+          POSTGRES_DB=migaraje
+          POSTGRES_USER=migaraje
+          POSTGRES_PASSWORD=ci_test_password
+          DATABASE_URL=postgresql+psycopg://migaraje:ci_test_password@db:5432/migaraje
+          VEHICLES_DATABASE_URL=postgresql+psycopg://migaraje:ci_test_password@db:5432/migaraje_vehicles
+          MAINTENANCE_DATABASE_URL=postgresql+psycopg://migaraje:ci_test_password@db:5432/migaraje_maintenance
+          PLANNING_DATABASE_URL=postgresql+psycopg://migaraje:ci_test_password@db:5432/migaraje_planning
+          VEHICLES_SERVICE_URL=http://vehicles-service:8000
+          PLANNING_SERVICE_URL=http://maintenance-planning-service:8002
+          EOF
+
+      - name: Start services and wait for health checks
+        run: |
+          docker compose up -d --build --wait --wait-timeout 180 \
+            vehicles-service \
+            maintenance-service \
+            maintenance-planning-service
+
+      #- name: Install integration test dependencies
+        #run: |
+          #python -m pip install --upgrade pip
+          #pip install requests
+
+      - name: Run integration tests
+        run: python scripts/integration_tests.py
+
+      - name: Show service logs if integration tests fail
+        if: failure()
+        run: docker compose logs
+
+      - name: Stop services
+        if: always()
+        run: docker compose down
