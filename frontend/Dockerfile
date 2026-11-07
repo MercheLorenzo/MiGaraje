@@ -7,7 +7,7 @@ FROM node:22-alpine AS development
 WORKDIR /app
 
 # Servidor estático de desarrollo con recarga automática
-RUN npm install --global live-server
+RUN npm install --global live-server@1.2.2
 
 COPY . .
 

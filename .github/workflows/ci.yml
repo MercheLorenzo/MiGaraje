@@ -11,7 +11,7 @@ on:
 
 permissions:
   contents: read
-  
+
 jobs:
   test:
     name: Test ${{ matrix.service }}
@@ -55,3 +55,25 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -v
+  lint-dockerfiles:
+    name: Hadolint - ${{ matrix.dockerfile }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        dockerfile:
+          - frontend/Dockerfile
+          - services/vehicles-service/Dockerfile
+          - services/maintenance-service/Dockerfile
+          - services/maintenance-planning-service/Dockerfile
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ${{ matrix.dockerfile }}
+          failure-threshold: warning
