@@ -1,14 +1,15 @@
+from unittest.mock import MagicMock
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
-from sqlalchemy.pool import StaticPool
-from sqlalchemy.orm import sessionmaker
-from unittest.mock import MagicMock
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
+from app import main as main_module
 from app.db.session import Base, get_db
 from app.main import app
-from app import main as main_module
 
 # Base de datos SQLite independiente, mantenida en memoria.
 TEST_DATABASE_URL = "sqlite://"
@@ -49,6 +50,7 @@ def client():
         test_client.close()
         app.dependency_overrides.clear()
         Base.metadata.drop_all(bind=test_engine)
+
 
 def vehicle_payload(**overrides):
     data = {
@@ -198,9 +200,7 @@ def test_duplicate_license_plate(client):
     response = client.post("/vehicles", json=duplicate)
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "La matrícula ya está registrada."
-    )
+    assert response.json()["detail"] == ("La matrícula ya está registrada.")
 
 
 def test_health_endpoint(client):
@@ -209,11 +209,13 @@ def test_health_endpoint(client):
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
+
 def test_health_live_endpoint(client):
     response = client.get("/health/live")
 
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
+
 
 def test_health_ready_endpoint(client, monkeypatch):
     mock_connection = MagicMock()

@@ -1,8 +1,8 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.routes.maintenance import router as maintenance_router
 from app.core.config import settings
@@ -28,9 +28,11 @@ app.include_router(maintenance_router)
 def health():
     return {"status": "ok"}
 
+
 @app.get("/health/live")
 def health_live():
     return {"status": "ok", "service": "maintenance-service"}
+
 
 @app.get("/health/ready")
 def health_ready():
@@ -43,7 +45,7 @@ def health_ready():
             "service": "maintenance-service",
             "database": "ok",
         }
-    except Exception:
+    except SQLAlchemyError:
         raise HTTPException(
             status_code=503,
             detail={
@@ -51,4 +53,4 @@ def health_ready():
                 "service": "maintenance-service",
                 "database": "unavailable",
             },
-        )
+        ) from None

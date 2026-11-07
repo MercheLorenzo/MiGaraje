@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.clients.vehicles_client import (
+    VehicleNotFoundError,
+    VehicleServiceUnavailableError,
+)
 from app.db.session import get_db
 from app.schemas.maintenance import (
     MaintenanceCreate,
@@ -16,13 +20,9 @@ from app.services.maintenance_service import (
     list_vehicle_maintenances,
     update_maintenance,
 )
-from app.clients.vehicles_client import (
-    VehicleNotFoundError,
-    VehicleServiceUnavailableError,
-)
-
 
 router = APIRouter(prefix="/maintenances", tags=["Maintenance"])
+
 
 def handle_vehicle_error(exc: Exception) -> HTTPException:
     if isinstance(exc, VehicleNotFoundError):
@@ -35,6 +35,7 @@ def handle_vehicle_error(exc: Exception) -> HTTPException:
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         detail="No se ha podido verificar el vehículo.",
     )
+
 
 @router.post(
     "",
@@ -52,6 +53,7 @@ def create(
         VehicleServiceUnavailableError,
     ) as exc:
         raise handle_vehicle_error(exc) from exc
+
 
 @router.get("", response_model=list[MaintenanceResponse])
 def list_all(db: Session = Depends(get_db)):
@@ -83,7 +85,7 @@ def get_one(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Mantenimiento no encontrado.",
-        )
+        ) from None
 
 
 @router.put("/{maintenance_id}", response_model=MaintenanceResponse)
@@ -98,7 +100,7 @@ def update(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Mantenimiento no encontrado.",
-        )
+        ) from None
     except (
         VehicleNotFoundError,
         VehicleServiceUnavailableError,
@@ -120,4 +122,4 @@ def delete(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Mantenimiento no encontrado.",
-        )
+        ) from None

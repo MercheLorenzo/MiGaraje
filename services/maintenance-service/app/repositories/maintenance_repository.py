@@ -14,7 +14,10 @@ def create(db: Session, data: MaintenanceCreate) -> Maintenance:
 
 
 def get_all(db: Session) -> list[Maintenance]:
-    statement = select(Maintenance).order_by(Maintenance.date.desc(), Maintenance.id.desc())
+    statement = select(Maintenance).order_by(
+        Maintenance.date.desc(),
+        Maintenance.id.desc(),
+    )
     return list(db.scalars(statement).all())
 
 

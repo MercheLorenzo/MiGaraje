@@ -12,10 +12,7 @@ class VehicleServiceUnavailableError(Exception):
 
 
 def verify_vehicle_exists(vehicle_id: int) -> None:
-    url = (
-        f"{settings.vehicles_service_url.rstrip('/')}"
-        f"/vehicles/{vehicle_id}"
-    )
+    url = f"{settings.vehicles_service_url.rstrip('/')}/vehicles/{vehicle_id}"
 
     try:
         response = httpx.get(url, timeout=3.0)

@@ -1,22 +1,21 @@
 from datetime import date
-from decimal import Decimal
-import httpx
+from unittest.mock import MagicMock
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from unittest.mock import MagicMock
-from sqlalchemy.exc import SQLAlchemyError
 
-from app.db.session import Base, get_db
-from app.main import app
-from app.services import maintenance_service
+from app import main as main_module
 from app.clients.vehicles_client import (
     VehicleNotFoundError,
     VehicleServiceUnavailableError,
 )
-from app import main as main_module
+from app.db.session import Base, get_db
+from app.main import app
+from app.services import maintenance_service
 
 test_engine = create_engine(
     "sqlite://",
@@ -229,9 +228,10 @@ def test_health_endpoint(client):
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
+
 def vehicle_exists(vehicle_id: int) -> None:
     """Simula que el vehículo existe en vehicles-service."""
-    return None
+    return
 
 
 def vehicle_not_found(vehicle_id: int) -> None:
@@ -242,6 +242,7 @@ def vehicle_not_found(vehicle_id: int) -> None:
 def vehicles_service_unavailable(vehicle_id: int) -> None:
     """Simula que vehicles-service no está disponible."""
     raise VehicleServiceUnavailableError
+
 
 def test_create_maintenance_with_existing_vehicle(client):
     response = client.post(
@@ -287,6 +288,7 @@ def test_create_maintenance_when_vehicles_service_is_unavailable(
     )
 
     assert response.status_code == 503
+
 
 def test_health_live_endpoint(client):
     response = client.get("/health/live")

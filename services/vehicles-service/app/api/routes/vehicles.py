@@ -58,7 +58,7 @@ def get_one(
         raise HTTPException(
             status_code=404,
             detail="Vehículo no encontrado.",
-        )
+        ) from None
 
 
 @router.put("/{vehicle_id}", response_model=VehicleResponse)
@@ -73,7 +73,7 @@ def update(
         raise HTTPException(
             status_code=404,
             detail="Vehículo no encontrado.",
-        )
+        ) from None
     except DuplicateLicensePlateError:
         handle_integrity_error()
 
@@ -92,4 +92,4 @@ def delete(
         raise HTTPException(
             status_code=404,
             detail="Vehículo no encontrado.",
-        )
+        ) from None

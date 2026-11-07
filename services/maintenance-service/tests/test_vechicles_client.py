@@ -1,6 +1,7 @@
+from unittest.mock import Mock
+
 import httpx
 import pytest
-from unittest.mock import Mock
 
 from app.clients import vehicles_client
 from app.clients.vehicles_client import (

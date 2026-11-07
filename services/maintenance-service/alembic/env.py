@@ -1,12 +1,11 @@
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import create_engine, pool
 
+from alembic import context
 from app.core.config import settings
 from app.db.session import Base
 from app.models.maintenance import Maintenance  # Registra el modelo
-
 
 config = context.config
 

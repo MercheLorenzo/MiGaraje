@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 
 from app.clients.vehicles_client import (
-    VehicleNotFoundError,
-    VehicleServiceUnavailableError,
     verify_vehicle_exists,
 )
 from app.repositories import maintenance_repository as repository

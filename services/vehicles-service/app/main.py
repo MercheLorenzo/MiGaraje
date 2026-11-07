@@ -1,12 +1,12 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.routes.vehicles import router as vehicles_router
 from app.core.config import settings
-from app.db.session import Base, engine
+from app.db.session import engine
 from app.models.vehicle import Vehicle  # Registra el modelo
 
 
@@ -28,9 +28,11 @@ app.include_router(vehicles_router)
 def health():
     return {"status": "ok"}
 
+
 @app.get("/health/live")
 def health_live():
     return {"status": "ok", "service": "vehicles-service"}
+
 
 @app.get("/health/ready")
 def health_ready():
@@ -43,7 +45,7 @@ def health_ready():
             "service": "vehicles-service",
             "database": "ok",
         }
-    except Exception:
+    except SQLAlchemyError:
         raise HTTPException(
             status_code=503,
             detail={
@@ -51,4 +53,4 @@ def health_ready():
                 "service": "vehicles-service",
                 "database": "unavailable",
             },
-        )
+        ) from None
