@@ -76,7 +76,7 @@ def get_one(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Regla de mantenimiento no encontrada.",
-        )
+        ) from None
 
 
 @router.put("/{rule_id}", response_model=MaintenanceRuleResponse)
@@ -91,7 +91,7 @@ def update(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Regla de mantenimiento no encontrada.",
-        )
+        ) from None
     except (
         VehicleNotFoundError,
         VehicleServiceUnavailableError,
@@ -113,4 +113,4 @@ def delete(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Regla de mantenimiento no encontrada.",
-        )
+        ) from None

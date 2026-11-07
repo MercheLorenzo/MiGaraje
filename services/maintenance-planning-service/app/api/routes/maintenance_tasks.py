@@ -1,5 +1,3 @@
-from datetime import date
-
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
@@ -88,7 +86,7 @@ def get_one(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tarea de mantenimiento no encontrada.",
-        )
+        ) from None
 
 
 @router.patch(
@@ -111,4 +109,4 @@ def mark_completed(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tarea de mantenimiento no encontrada.",
-        )
+        ) from None

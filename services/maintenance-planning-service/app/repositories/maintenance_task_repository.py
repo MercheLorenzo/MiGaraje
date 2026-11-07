@@ -24,14 +24,10 @@ def get_all(
     statement = select(MaintenanceTask)
 
     if vehicle_id is not None:
-        statement = statement.where(
-            MaintenanceTask.vehicle_id == vehicle_id
-        )
+        statement = statement.where(MaintenanceTask.vehicle_id == vehicle_id)
 
     if status is not None:
-        statement = statement.where(
-            MaintenanceTask.status == status
-        )
+        statement = statement.where(MaintenanceTask.status == status)
 
     statement = statement.order_by(
         MaintenanceTask.due_date.asc(),

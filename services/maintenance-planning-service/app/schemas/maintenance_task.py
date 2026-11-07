@@ -2,7 +2,6 @@ from datetime import date
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-
 TASK_STATUSES = {"pending", "upcoming", "overdue", "completed"}
 
 
@@ -19,8 +18,7 @@ class MaintenanceTaskCreate(BaseModel):
     def validate_due_limits(self):
         if self.due_date is None and self.due_mileage is None:
             raise ValueError(
-                "Debe especificarse una fecha prevista "
-                "o un kilometraje previsto."
+                "Debe especificarse una fecha prevista o un kilometraje previsto."
             )
         return self
 

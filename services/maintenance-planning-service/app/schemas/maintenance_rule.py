@@ -27,8 +27,7 @@ class MaintenanceRuleCreate(BaseModel):
             and self.interval_kilometers is None
         ):
             raise ValueError(
-                "Debe especificarse al menos un intervalo temporal "
-                "o de kilometraje."
+                "Debe especificarse al menos un intervalo temporal o de kilometraje."
             )
         return self
 

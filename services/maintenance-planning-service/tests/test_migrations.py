@@ -5,7 +5,6 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, inspect, text
 
-
 SERVICE_DIR = Path(__file__).resolve().parents[1]
 EXPECTED_REVISION = "bfa900fd755e"
 
@@ -21,15 +20,14 @@ def test_fresh_database_can_be_initialized_with_alembic(tmp_path):
         [sys.executable, "-m", "alembic", "upgrade", "head"],
         cwd=SERVICE_DIR,
         env=env,
+        check=False,
         capture_output=True,
         text=True,
         timeout=60,
     )
 
     assert result.returncode == 0, (
-        f"Alembic falló.\n"
-        f"STDOUT:\n{result.stdout}\n"
-        f"STDERR:\n{result.stderr}"
+        f"Alembic falló.\nSTDOUT:\n{result.stdout}\nSTDERR:\n{result.stderr}"
     )
 
     engine = create_engine(database_url)

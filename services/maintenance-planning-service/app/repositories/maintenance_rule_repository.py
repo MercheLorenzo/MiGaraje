@@ -23,9 +23,7 @@ def get_all(
     statement = select(MaintenanceRule)
 
     if vehicle_id is not None:
-        statement = statement.where(
-            MaintenanceRule.vehicle_id == vehicle_id
-        )
+        statement = statement.where(MaintenanceRule.vehicle_id == vehicle_id)
 
     statement = statement.order_by(MaintenanceRule.id.desc())
     return list(db.scalars(statement).all())

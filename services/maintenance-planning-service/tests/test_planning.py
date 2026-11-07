@@ -15,9 +15,7 @@ from app.clients.vehicles_client import (
 )
 from app.db.session import Base, get_db
 from app.main import app
-from app.models import MaintenanceRule, MaintenanceTask
 from app.services import maintenance_rule_service, maintenance_task_service
-
 
 test_engine = create_engine(
     "sqlite://",
@@ -130,6 +128,7 @@ def create_task(client, **overrides):
 
 
 # Reglas de mantenimiento
+
 
 def test_create_maintenance_rule(client):
     response = client.post(
@@ -267,9 +266,7 @@ def test_delete_maintenance_rule(client):
     response = client.delete(f"/maintenance-rules/{created['id']}")
 
     assert response.status_code == 204
-    assert client.get(
-        f"/maintenance-rules/{created['id']}"
-    ).status_code == 404
+    assert client.get(f"/maintenance-rules/{created['id']}").status_code == 404
 
 
 def test_delete_nonexistent_rule(client):
@@ -279,6 +276,7 @@ def test_delete_nonexistent_rule(client):
 
 
 # Tareas de mantenimiento
+
 
 def test_create_maintenance_task(client):
     response = client.post(
@@ -515,6 +513,7 @@ def test_complete_nonexistent_task(client):
 
 
 # Health checks
+
 
 def test_health_endpoint(client):
     response = client.get("/health")

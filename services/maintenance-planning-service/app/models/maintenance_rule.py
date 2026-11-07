@@ -1,7 +1,6 @@
 from datetime import date
-from decimal import Decimal
 
-from sqlalchemy import Boolean, Date, Integer, Numeric, String, Text
+from sqlalchemy import Boolean, Date, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.session import Base
