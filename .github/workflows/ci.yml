@@ -106,7 +106,8 @@ jobs:
             --target production \
             -t migaraje-${{ matrix.image.name }}:ci \
             ${{ matrix.image.context }}
-    integration-tests:
+  
+  integration-tests:
     name: Integration tests
     runs-on: ubuntu-latest
 
