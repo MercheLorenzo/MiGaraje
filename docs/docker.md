@@ -162,19 +162,34 @@ La selección del entorno se realiza mediante el atributo `build.target` de Dock
 
 ## 8. Independencia del frontend y acceso a las API
 
-El frontend se ejecuta en su propio contenedor y puede servir la página estática sin que sea necesario ejecutar los microservicios backend.
+El frontend se ejecuta en su propio contenedor y puede servir la página estática de forma independiente de los microservicios backend.
 
 Los tres microservicios mantienen sus puertos publicados para permitir el acceso a la documentación interactiva de sus API mediante Swagger:
 
 | Microservicio | URL de Swagger |
 |---|---|
-| Vehículos | http://localhost:8000/docs |
-| Mantenimiento | http://localhost:8001/docs |
-| Planificación del mantenimiento | http://localhost:8002/docs |
+| Vehículos | [http://localhost:8000/docs](http://localhost:8000/docs) |
+| Mantenimiento | [http://localhost:8001/docs](http://localhost:8001/docs) |
+| Planificación del mantenimiento | [http://localhost:8002/docs](http://localhost:8002/docs) |
 
-Estas direcciones permiten acceder desde el navegador a la documentación de cada API.
+Para permitir la comunicación entre el frontend y las API, se ha configurado **CORS (Cross-Origin Resource Sharing)** en los tres microservicios mediante el middleware `CORSMiddleware` de FastAPI.
 
-La accesibilidad de Swagger no implica que las llamadas HTTP realizadas desde JavaScript estén configuradas automáticamente. Cuando se incorporen peticiones desde el frontend, será necesario utilizar las URL adecuadas y configurar CORS en los servicios cuando corresponda.
+Se han autorizado los dos orígenes desde los que se sirve el frontend:
+
+- `http://localhost:8080`: entorno de desarrollo.
+- `http://localhost:8081`: entorno de producción.
+
+La configuración permite peticiones con credenciales y admite los métodos HTTP y las cabeceras necesarios para la comunicación entre ambos componentes.
+
+De esta manera, tanto el frontend de desarrollo como el de producción pueden realizar peticiones HTTP a los tres microservicios sin que el navegador las bloquee por restricciones CORS.
+
+**Validación de la comunicación**
+
+Se ha comprobado desde ambos entornos frontend el acceso a los endpoints `/health/ready` de los tres microservicios. Las peticiones han devuelto respuestas HTTP `200 OK`, confirmando que:
+
+- Los dos frontends pueden comunicarse con los tres microservicios.
+- La configuración CORS permite los orígenes autorizados.
+- Los servicios backend están disponibles y sus bases de datos responden correctamente.
 
 La independencia del frontend permite desarrollar y servir la interfaz por separado, mientras que cada microservicio conserva sus propias responsabilidades y dependencias.
 
