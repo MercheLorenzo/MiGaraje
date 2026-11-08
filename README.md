@@ -1,5 +1,7 @@
 # MiGaraje — Gestión inteligente del mantenimiento de vehículos
 
+> Si quieres consultar el README entregado originalmente para el Hito 1, puedes acceder a él [aquí](docs/hito1readme.md).
+
 <p align="center">
   <img src="MiGaraje.png" alt="Logo de MiGaraje" width="200">
 </p>
@@ -9,8 +11,6 @@
 **Titulación:** Máster Universitario en Ingeniería Informática  
 **Curso académico:** 2026-2027  
 **Universidad:** Universidad de Granada (UGR)
-
-> Si quieres consultar el README entregado originalmente para el Hito 1, puedes acceder a él [aquí](docs/hito1readme.md).
 
 ---
 
@@ -87,7 +87,7 @@ MiGaraje sigue una arquitectura de microservicios en la que cada servicio mantie
 
 Los tres microservicios backend están desarrollados con FastAPI y exponen sus operaciones mediante APIs REST.
 
-Cada servicio mantiene su propia base de datos lógica en PostgreSQL, preservando la separación de responsabilidades y la propiedad de los datos.
+Aunque los tres microservicios utilizan una misma instancia de PostgreSQL, cada uno dispone de una base de datos independiente: `migaraje_vehicles`, `migaraje_maintenance` y `migaraje_planning`. Esta separación lógica permite mantener la propiedad de los datos y las responsabilidades de cada servicio sin necesidad de desplegar una instancia de PostgreSQL por microservicio.
 
 ### 3.2. Comunicación entre componentes
 
@@ -102,9 +102,11 @@ Los microservicios incorporan middleware CORS para permitir las peticiones desde
 
 ### 3.3. Persistencia
 
-PostgreSQL se ejecuta en un contenedor independiente. Los datos se almacenan en un volumen persistente gestionado por Docker Compose, de manera que no dependen del ciclo de vida del contenedor.
+PostgreSQL 17 se ejecuta en un contenedor independiente y proporciona una instancia compartida por los tres microservicios backend. Cada servicio utiliza su propia base de datos lógica, evitando compartir directamente sus tablas y manteniendo la separación de responsabilidades.
 
-La inicialización de las bases de datos y la aplicación de migraciones se realizan mediante los servicios auxiliares definidos en `compose.yaml`.
+Los datos se almacenan en el volumen persistente `postgres_data`, de manera que no dependen del ciclo de vida del contenedor.
+
+La inicialización de las tres bases de datos se realiza mediante el servicio auxiliar `db-init`, que comprueba cuáles existen y crea únicamente las que faltan. Posteriormente, los servicios auxiliares de migraciones aplican los cambios de esquema correspondientes a cada microservicio mediante Alembic.
 
 ### 3.4. Diagrama de arquitectura
 
@@ -289,6 +291,19 @@ Estas pruebas verifican la disponibilidad de los servicios, la creación de recu
 
 La documentación detallada de las pruebas está disponible en [`docs/testing.md`](docs/testing.md).
 
+### Pruebas automatizadas
+
+Los tres microservicios disponen de pruebas automatizadas ejecutadas con `pytest`:
+
+| Microservicio | Tests superados |
+|---|---:|
+| vehicles-service | 17 |
+| maintenance-service | 30 |
+| maintenance-planning-service | 45 |
+| **Total** | **92** |
+
+Todas las pruebas finalizaron correctamente, sin tests fallidos.
+
 ### 7.1. Comprobaciones de salud
 
 Los tres microservicios exponen endpoints de salud:
@@ -382,14 +397,23 @@ El repositorio contiene documentación técnica complementaria:
 
 ## 10. Evolución del proyecto
 
-El desarrollo de MiGaraje se organiza en hitos progresivos dentro de la asignatura Cloud Computing.
+El desarrollo de MiGaraje se organiza en cinco hitos progresivos dentro de la asignatura Cloud Computing, que permiten evolucionar desde la definición inicial de la aplicación hasta su despliegue, operación y evaluación final.
 
 - **Hito 1 — Definición del proyecto, modelo de negocio y arquitectura de referencia:** definición del problema, funcionalidades, propuesta de valor y diseño inicial de la arquitectura.
 - **Hito 2 — Empaquetado Cloud Native, entorno local e integración continua:** contenerización de los componentes, orquestación mediante Docker Compose, pruebas automatizadas y publicación de imágenes en GHCR.
-- **Hito 3 — Infraestructura como código y patrón reconciliador:** incorporación de mecanismos para definir y gestionar la infraestructura de forma automatizada.
-- **Hito 4 — Despliegue continuo y reconciliación automatizada:** evolución del proceso de despliegue y automatización de la convergencia del sistema hacia el estado deseado.
+- **Hito 3 — Infraestructura como código y patrón reconciliador:** incorporación de mecanismos para definir y gestionar la infraestructura mediante código y verificar el patrón reconciliador.
+- **Hito 4 — Despliegue continuo, reconciliación automatizada y seguridad:** evolución del proceso de despliegue, automatización de la convergencia del sistema hacia el estado deseado e incorporación de aspectos de seguridad.
+- **Hito 5 — Observabilidad, pruebas de carga y release final:** incorporación de mecanismos de observabilidad, evaluación del comportamiento de la aplicación mediante pruebas de carga y preparación de la versión final del proyecto.
 
-La implementación de las funcionalidades y de la infraestructura continuará evolucionando conforme a los objetivos de cada hito.
+La implementación de las funcionalidades y de la infraestructura continuará evolucionando conforme a los objetivos y criterios de evaluación de cada hito.
+
+Las descripciones detalladas de los requisitos de cada entrega se encuentran en el [repositorio docente de la asignatura](https://github.com/cvillalonga/CC-26-27/tree/main/hitos):
+
+- [Hito 1](https://github.com/cvillalonga/CC-26-27/blob/main/hitos/hito1.md)
+- [Hito 2](https://github.com/cvillalonga/CC-26-27/blob/main/hitos/hito2.md)
+- [Hito 3](https://github.com/cvillalonga/CC-26-27/blob/main/hitos/hito3.md)
+- [Hito 4](https://github.com/cvillalonga/CC-26-27/blob/main/hitos/hito4.md)
+- [Hito 5](https://github.com/cvillalonga/CC-26-27/blob/main/hitos/hito5.md)
 
 ## 11. Referencias
 

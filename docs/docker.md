@@ -199,7 +199,11 @@ Se han realizado las siguientes comprobaciones en el entorno local:
 
 - Construcción y ejecución de los tres microservicios mediante Docker Compose.
 - Comprobación de los endpoints de salud de los microservicios.
-- Ejecución satisfactoria de las pruebas automatizadas de `vehicles-service`, con 17 tests superados.
+- Ejecución satisfactoria de las pruebas automatizadas de los tres microservicios:
+  - `vehicles-service`: 17 tests superados.
+  - `maintenance-service`: 30 tests superados.
+  - `maintenance-planning-service`: 45 tests superados.
+  - **Total: 92 tests superados, sin fallos.**
 - Construcción de las imágenes del frontend para desarrollo y producción.
 - Arranque del frontend de desarrollo y acceso a la página principal mediante el puerto `8080`.
 - Arranque del frontend de producción y acceso a la página principal mediante el puerto `8081`.
