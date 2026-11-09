@@ -54,6 +54,7 @@ La detección automática de tareas próximas o vencidas y el envío de notifica
 | Alembic | Gestión versionada de migraciones de la base de datos. |
 | HTTP y JSON | Comunicación entre microservicios mediante API REST. |
 | Pytest | Ejecución de pruebas automatizadas. |
+| Ruff | Análisis estático, comprobación de estilo y detección de errores potenciales en el código Python. |
 | Docker | Empaquetado y ejecución del microservicio en un contenedor. |
 | Docker Compose | Coordinación de los microservicios y la infraestructura local. |
 
@@ -188,9 +189,9 @@ La documentación de Swagger permite consultar los parámetros, los esquemas de 
 
 La API proporciona operaciones relacionadas con las reglas y las tareas de mantenimiento.
 
-Entre las operaciones previstas para las reglas se encuentran:
+Entre las operaciones disponibles para las reglas se encuentran:
 
-| Método HTTP | Rutas | Operación |
+| Método HTTP | Ruta | Operación |
 |---|---|---|
 | `POST` | `/maintenance-rules` | Crear una regla de mantenimiento. |
 | `GET` | `/maintenance-rules` | Consultar las reglas de mantenimiento. |
@@ -198,9 +199,16 @@ Entre las operaciones previstas para las reglas se encuentran:
 | `PUT` | `/maintenance-rules/{rule_id}` | Actualizar una regla de mantenimiento. |
 | `DELETE` | `/maintenance-rules/{rule_id}` | Eliminar una regla de mantenimiento. |
 
-El servicio también contempla operaciones sobre las tareas de mantenimiento.
+El servicio también proporciona operaciones sobre las tareas de mantenimiento:
 
-La tabla anterior describe las operaciones CRUD previstas; para conocer las rutas exactas y comprobar cuáles están implementadas actualmente, consulta `http://localhost:8002/docs`. La documentación interactiva de FastAPI refleja los endpoints registrados en la aplicación.
+| Método HTTP | Ruta | Operación |
+|---|---|---|
+| `POST` | `/maintenance-tasks` | Crear una tarea de mantenimiento. |
+| `GET` | `/maintenance-tasks` | Consultar las tareas de mantenimiento. |
+| `GET` | `/maintenance-tasks/{task_id}` | Consultar una tarea por su identificador. |
+| `PATCH` | `/maintenance-tasks/{task_id}/complete` | Marcar una tarea de mantenimiento como completada. |
+
+Para consultar la documentación interactiva de la API, comprobar los endpoints registrados y probar las operaciones disponibles, accede a `http://localhost:8002/docs`. Esta documentación de FastAPI refleja las rutas implementadas actualmente en la aplicación.
 
 ## Base de datos y migraciones
 
@@ -300,5 +308,28 @@ python -m pytest -v services/maintenance-planning-service/tests
 
 Las pruebas de migraciones pueden ejecutarse sobre una base de datos SQLite temporal para verificar que el esquema puede inicializarse mediante Alembic sin modificar la base de datos de desarrollo.
 
-En la última ejecución documentada, el servicio contaba con **36 pruebas automatizadas superadas**. Conviene volver a ejecutar la suite antes de cerrar esta fase para confirmar el estado actual del código.
+En la última ejecución documentada, el servicio contaba con **45 pruebas automatizadas superadas**. Conviene volver a ejecutar la suite antes de cerrar esta fase para confirmar el estado actual del código.
 
+## Calidad del código
+
+El proyecto utiliza [Ruff](https://docs.astral.sh/ruff/) para realizar comprobaciones estáticas del código Python, detectar posibles errores y mantener un estilo de código consistente.
+
+Desde el directorio del microservicio, se pueden ejecutar las siguientes comprobaciones:
+
+```bash
+ruff check .
+```
+
+Para comprobar que los archivos siguen el formato establecido:
+
+```bash
+ruff format --check .
+```
+
+Si se desea aplicar automáticamente el formato:
+
+```bash
+ruff format .
+```
+
+Estas comprobaciones complementan las pruebas automatizadas y ayudan a mantener la calidad y legibilidad del código.s

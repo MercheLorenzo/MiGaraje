@@ -45,6 +45,7 @@ Entre las validaciones contempladas se encuentran la matrícula, el año del veh
 | PostgreSQL | Base de datos relacional. |
 | Alembic | Gestión versionada de migraciones de la base de datos. |
 | Pytest | Ejecución de pruebas automatizadas. |
+| Ruff | Análisis estático, comprobación de estilo y detección de errores potenciales en el código Python. |
 | Docker | Empaquetado y ejecución del microservicio en un contenedor. |
 
 ## Arquitectura y responsabilidades
@@ -241,3 +242,27 @@ python -m pytest -v
 Las pruebas de migraciones verifican que una base de datos nueva puede inicializarse mediante Alembic sin depender de la base de datos de desarrollo.
 
 El servicio cuenta con **17 pruebas automatizadas que pasan correctamente** en la última ejecución documentada.
+
+## Calidad del código
+
+El proyecto utiliza [Ruff](https://docs.astral.sh/ruff/) para realizar comprobaciones estáticas del código Python, detectar posibles errores y mantener un estilo de código consistente.
+
+Desde el directorio del microservicio, se pueden ejecutar las siguientes comprobaciones:
+
+```bash
+ruff check .
+```
+
+Para comprobar que los archivos siguen el formato establecido:
+
+```bash
+ruff format --check .
+```
+
+Si se desea aplicar automáticamente el formato:
+
+```bash
+ruff format .
+```
+
+Estas comprobaciones complementan las pruebas automatizadas y ayudan a mantener la calidad y legibilidad del código.
