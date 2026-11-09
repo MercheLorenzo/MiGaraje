@@ -332,4 +332,4 @@ Si se desea aplicar automáticamente el formato:
 ruff format .
 ```
 
-Estas comprobaciones complementan las pruebas automatizadas y ayudan a mantener la calidad y legibilidad del código.s
+Estas comprobaciones complementan las pruebas automatizadas y ayudan a mantener la calidad y legibilidad del código.
