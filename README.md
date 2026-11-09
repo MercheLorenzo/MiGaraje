@@ -67,7 +67,7 @@ MiGaraje contempla las siguientes áreas funcionales:
 | Historial | Consulta de las intervenciones asociadas a cada vehículo. |
 | Gastos | Registro de los costes relacionados con los mantenimientos. |
 
-La implementación se realiza de forma progresiva. Actualmente, el proyecto dispone de los tres microservicios backend y de una página web estática que presenta la aplicación y permite acceder a la documentación interactiva de sus APIs.
+La implementación se realiza de forma progresiva. Actualmente, el proyecto dispone de los tres primeros microservicios backend y de una página web estática que presenta la aplicación y permite acceder a la documentación interactiva de sus APIs.
 
 La interfaz gráfica todavía no implementa todas las operaciones de gestión funcionales. Estas operaciones se exponen a través de las APIs REST y pueden probarse mediante Swagger UI.
 
@@ -199,10 +199,21 @@ Se aplican distintas buenas prácticas de contenerización:
 - Ejecución de los servicios mediante usuarios sin privilegios de administrador (*non-root*).
 - Exposición de los puertos necesarios para cada servicio.
 
-El frontend dispone de dos targets de construcción:
+### 5.2. Frontend: objetivos de desarrollo y producción
 
-- **Development:** utiliza Node.js 22 Alpine y `live-server`, con el código fuente montado desde el equipo anfitrión.
-- **Production:** utiliza Nginx Alpine para servir los archivos estáticos mediante una imagen independiente, sin incorporar herramientas de desarrollo.
+El frontend dispone de dos objetivos de construcción independientes:
+
+- **Development:** utiliza Node.js y `live-server`, permitiendo servir la aplicación durante el desarrollo y facilitar la actualización de los archivos.
+- **Production:** utiliza Nginx para servir los archivos estáticos mediante una imagen ligera, sin incorporar herramientas de desarrollo.
+
+Ambos objetivos se ejecutan en contenedores independientes y utilizan puertos diferentes para permitir el acceso simultáneo a las dos versiones:
+
+- Desarrollo: `http://localhost:8080`.
+- Producción: `http://localhost:8081`.
+
+El acceso del frontend a los microservicios se realiza mediante las APIs REST. Para permitir estas comunicaciones desde los distintos orígenes locales, los servicios backend incorporan una configuración CORS específica.
+
+La configuración de ambos objetivos, las URLs de acceso, los puertos y los detalles de comunicación con las APIs se describen en [**`docs/frontend.md`**](docs/frontend.md).
 
 ### 5.2. Orquestación mediante Docker Compose
 
@@ -364,20 +375,7 @@ Además de estas pruebas, el proyecto dispone de un script de integración que r
 
 Estas pruebas verifican la disponibilidad de los servicios, la creación de recursos y la validación de las relaciones entre vehículos, mantenimientos, reglas y tareas.
 
-La documentación detallada de las pruebas está disponible en [`docs/testing.md`](docs/testing.md).
-
-### Pruebas automatizadas
-
-Los tres microservicios disponen de pruebas automatizadas ejecutadas con `pytest`:
-
-| Microservicio | Tests superados |
-|---|---:|
-| vehicles-service | 17 |
-| maintenance-service | 30 |
-| maintenance-planning-service | 45 |
-| **Total** | **92** |
-
-Todas las pruebas finalizaron correctamente, sin tests fallidos.
+La documentación detallada de las pruebas está disponible en [**docs/testing.md**](docs/testing.md).
 
 ### 7.1. Comprobaciones de salud
 
@@ -391,7 +389,7 @@ Los tres microservicios exponen endpoints de salud:
 
 Docker Compose incorpora health checks para PostgreSQL, los microservicios y ambos frontends.
 
-Los detalles y comandos de verificación se encuentran en [`docs/health-checks.md`](docs/health-checks.md).
+Los detalles y comandos de verificación se encuentran en [**docs/health-checks.md**](docs/health-checks.md).
 
 ## 8. Integración continua y publicación de imágenes
 
@@ -448,21 +446,13 @@ La publicación está limitada a los cambios enviados a `main` y a las ejecucion
 
 ### 8.2. Consulta de resultados
 
-Las ejecuciones del pipeline pueden consultarse en:
-
-[GitHub Actions — MiGaraje](https://github.com/MercheLorenzo/MiGaraje/actions)
-
-Los paquetes publicados están disponibles en:
-
-[GitHub Packages — MiGaraje](https://github.com/MercheLorenzo?tab=packages)
-
 La ejecución del workflow correspondiente a la validación del Hito 2 finalizó correctamente, con **16 de 16 jobs superados**.
 
 Puede consultarse el historial de ejecuciones en [GitHub Actions — MiGaraje](https://github.com/MercheLorenzo/MiGaraje/actions).
 
 También se puede consultar el [repositorio de imágenes publicadas en GitHub Packages](https://github.com/MercheLorenzo?tab=packages).
 
-Para obtener más información sobre los jobs, sus herramientas y las validaciones realizadas, consulta [`docs/ci.md`](docs/ci.md).
+Para obtener más información sobre los jobs, sus herramientas y las validaciones realizadas, consulta [**docs/ci.md**](docs/ci.md).
 
 ## 9. Documentación adicional
 

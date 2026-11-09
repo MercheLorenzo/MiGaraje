@@ -165,6 +165,8 @@ Esta publicación permite distribuir las imágenes de producción y utilizarlas 
 
 Los resultados de las ejecuciones pueden consultarse en GitHub, accediendo al repositorio y seleccionando la pestaña **Actions**.
 
+[GitHub Actions — MiGaraje](https://github.com/MercheLorenzo/MiGaraje/actions)
+
 Cada ejecución muestra el estado de los distintos jobs:
 
 - **Success**: todas las comprobaciones del job han terminado correctamente.
@@ -174,7 +176,7 @@ El job `publish-images` permite comprobar el resultado de la publicación de cad
 
 Además, los paquetes publicados pueden consultarse desde la sección **Packages** del perfil de GitHub:
 
-[https://github.com/MercheLorenzo?tab=packages](https://github.com/MercheLorenzo?tab=packages)
+[GitHub Packages — MiGaraje](https://github.com/MercheLorenzo?tab=packages)
 
 Desde esta sección es posible acceder a cada imagen y consultar sus versiones y etiquetas disponibles.
 
