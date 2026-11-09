@@ -470,11 +470,13 @@ El repositorio contiene documentación técnica complementaria:
 
 El desarrollo de MiGaraje se organiza en cinco hitos progresivos dentro de la asignatura Cloud Computing, que permiten evolucionar desde la definición inicial de la aplicación hasta su despliegue, operación y evaluación final.
 
-- **Hito 1 — Definición del proyecto, modelo de negocio y arquitectura de referencia:** definición del problema, funcionalidades, propuesta de valor y diseño inicial de la arquitectura.
-- **Hito 2 — Empaquetado Cloud Native, entorno local e integración continua:** contenerización de los componentes, orquestación mediante Docker Compose, pruebas automatizadas y publicación de imágenes en GHCR.
-- **Hito 3 — Infraestructura como código y patrón reconciliador:** incorporación de mecanismos para definir y gestionar la infraestructura mediante código y verificar el patrón reconciliador.
-- **Hito 4 — Despliegue continuo, reconciliación automatizada y seguridad:** evolución del proceso de despliegue, automatización de la convergencia del sistema hacia el estado deseado e incorporación de aspectos de seguridad.
-- **Hito 5 — Observabilidad, pruebas de carga y release final:** incorporación de mecanismos de observabilidad, evaluación del comportamiento de la aplicación mediante pruebas de carga y preparación de la versión final del proyecto.
+- ✅ **Hito 1 — Definición del proyecto, modelo de negocio y arquitectura de referencia:** definición del problema, funcionalidades, propuesta de valor y diseño inicial de la arquitectura.
+- ✅ **Hito 2 — Empaquetado Cloud Native, entorno local e integración continua:** contenerización de los componentes, orquestación mediante Docker Compose, pruebas automatizadas y publicación de imágenes en GHCR.
+- 🔵 **Hito 3 — Infraestructura como código y patrón reconciliador:** incorporación de mecanismos para definir y gestionar la infraestructura mediante código y verificar el patrón reconciliador.
+- ⏳ **Hito 4 — Despliegue continuo, reconciliación automatizada y seguridad:** evolución del proceso de despliegue, automatización de la convergencia del sistema hacia el estado deseado e incorporación de aspectos de seguridad.
+- ⏳ **Hito 5 — Observabilidad, pruebas de carga y release final:** incorporación de mecanismos de observabilidad, evaluación del comportamiento de la aplicación mediante pruebas de carga y preparación de la versión final del proyecto.
+
+> **Estado actual:** Hitos 1 y 2 completados. Actualmente, el desarrollo se encuentra en el Hito 3.
 
 La implementación de las funcionalidades y de la infraestructura continuará evolucionando conforme a los objetivos y criterios de evaluación de cada hito.
 
