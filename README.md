@@ -183,6 +183,8 @@ El frontend dispone de dos objetivos de construcción:
 - **Development:** utiliza Node.js y `live-server`, con montaje del código local para facilitar el desarrollo.
 - **Production:** utiliza Nginx para servir los archivos estáticos sin incorporar herramientas de desarrollo.
 
+La configuración del frontend, las URLs de acceso, los puertos y los detalles de comunicación con las APIs se describen en [**docs/frontend.md**](docs/frontend.md).
+
 Docker Compose coordina los contenedores, sus variables de entorno, las redes internas, los puertos publicados, las comprobaciones de salud y los volúmenes persistentes.
 
 ### 5.1. Construcción de imágenes Docker
@@ -198,22 +200,6 @@ Se aplican distintas buenas prácticas de contenerización:
 - Optimización del orden de las instrucciones para favorecer la reutilización de la caché de Docker.
 - Ejecución de los servicios mediante usuarios sin privilegios de administrador (*non-root*).
 - Exposición de los puertos necesarios para cada servicio.
-
-### 5.2. Frontend: objetivos de desarrollo y producción
-
-El frontend dispone de dos objetivos de construcción independientes:
-
-- **Development:** utiliza Node.js y `live-server`, permitiendo servir la aplicación durante el desarrollo y facilitar la actualización de los archivos.
-- **Production:** utiliza Nginx para servir los archivos estáticos mediante una imagen ligera, sin incorporar herramientas de desarrollo.
-
-Ambos objetivos se ejecutan en contenedores independientes y utilizan puertos diferentes para permitir el acceso simultáneo a las dos versiones:
-
-- Desarrollo: `http://localhost:8080`.
-- Producción: `http://localhost:8081`.
-
-El acceso del frontend a los microservicios se realiza mediante las APIs REST. Para permitir estas comunicaciones desde los distintos orígenes locales, los servicios backend incorporan una configuración CORS específica.
-
-La configuración de ambos objetivos, las URLs de acceso, los puertos y los detalles de comunicación con las APIs se describen en [**`docs/frontend.md`**](docs/frontend.md).
 
 ### 5.2. Orquestación mediante Docker Compose
 
