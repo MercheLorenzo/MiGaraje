@@ -185,7 +185,40 @@ El frontend dispone de dos objetivos de construcción:
 
 Docker Compose coordina los contenedores, sus variables de entorno, las redes internas, los puertos publicados, las comprobaciones de salud y los volúmenes persistentes.
 
-Para conocer los detalles de las imágenes, sus etapas de construcción y la configuración de Compose, consulta [`docs/docker.md`](docs/docker.md).
+### 5.1. Construcción de imágenes Docker
+
+Cada componente dispone de su propia configuración de construcción, lo que permite generar imágenes independientes y mantener la separación entre los servicios.
+
+Los tres microservicios backend utilizan Dockerfiles con construcción multi-stage (*multi-stage builds*). Este enfoque permite separar las etapas necesarias para preparar la aplicación de la imagen final de ejecución, evitando incorporar herramientas y dependencias innecesarias en producción.
+
+Se aplican distintas buenas prácticas de contenerización:
+
+- Uso de imágenes base ligeras para reducir el tamaño de las imágenes.
+- Separación de las dependencias y del código de la aplicación.
+- Optimización del orden de las instrucciones para favorecer la reutilización de la caché de Docker.
+- Ejecución de los servicios mediante usuarios sin privilegios de administrador (*non-root*).
+- Exposición de los puertos necesarios para cada servicio.
+
+El frontend dispone de dos targets de construcción:
+
+- **Development:** utiliza Node.js 22 Alpine y `live-server`, con el código fuente montado desde el equipo anfitrión.
+- **Production:** utiliza Nginx Alpine para servir los archivos estáticos mediante una imagen independiente, sin incorporar herramientas de desarrollo.
+
+### 5.2. Orquestación mediante Docker Compose
+
+El archivo `compose.yaml` coordina el entorno local completo. Además de los tres microservicios backend, define los dos targets del frontend y los servicios auxiliares de inicialización y migraciones.
+
+La infraestructura utiliza:
+
+- La red interna `migaraje-network` para la comunicación entre contenedores.
+- El volumen nombrado `postgres_data` para conservar los datos de PostgreSQL.
+- El servicio `db-init` para crear las bases de datos lógicas que todavía no existen.
+- Tres servicios de migraciones Alembic, uno por microservicio.
+- Healthchecks y dependencias de arranque para controlar la disponibilidad de los componentes.
+
+La instancia PostgreSQL 17 contiene tres bases de datos independientes: `migaraje_vehicles`, `migaraje_maintenance` y `migaraje_planning`.
+
+La configuración completa de los Dockerfiles y de los servicios de Compose se encuentra en [**docs/docker.md**](docs/docker.md).
 
 ## 6. Configuración y ejecución local
 
@@ -219,6 +252,10 @@ Copy-Item .env.example .env
 Editar `.env` y configurar los valores correspondientes al entorno local.
 
 **Importante:** no se debe sobrescribir un archivo `.env` existente sin conservar previamente su configuración. El archivo contiene credenciales locales y no debe subirse al repositorio.
+
+La plantilla `.env.example` recoge las variables necesarias para configurar el entorno local. Incluye las credenciales de PostgreSQL, las URLs de conexión a las tres bases de datos lógicas y las direcciones internas utilizadas para la comunicación entre microservicios.
+
+Las URLs utilizan los nombres de los servicios definidos en Docker Compose, de forma que los contenedores puedan localizarse a través de la red interna. El archivo `.env.example` contiene valores de ejemplo que deben adaptarse al entorno local, mientras que las credenciales reales se mantienen en el archivo `.env`, excluido del control de versiones.
 
 ### 6.4. Construir e iniciar el entorno
 
@@ -285,7 +322,45 @@ Para ejecutar las pruebas de un microservicio, instalar sus dependencias de desa
 python -m pytest -v
 ```
 
-El proyecto también dispone de un script de pruebas de integración que realiza peticiones HTTP reales a los tres microservicios desplegados mediante Docker Compose.
+Para ejecutar las pruebas de forma independiente, es necesario situarse en el directorio de cada microservicio y utilizar su entorno virtual correspondiente:
+
+```powershell
+$services = @(
+    "vehicles-service",
+    "maintenance-service",
+    "maintenance-planning-service"
+)
+
+foreach ($service in $services) {
+    Write-Host "`n=== Tests de $service ===" -ForegroundColor Cyan
+
+    Push-Location ".\services\$service"
+
+    try {
+        & ".\.venv\Scripts\python.exe" -m pytest -v
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Hay tests fallidos en $service" -ForegroundColor Red
+        }
+    }
+    finally {
+        Pop-Location
+    }
+}
+```
+
+En la última ejecución de las pruebas automatizadas se obtuvieron los siguientes resultados:
+
+| Microservicio | Tests superados |
+|---|---:|
+| `vehicles-service` | 17 |
+| `maintenance-service` | 30 |
+| `maintenance-planning-service` | 45 |
+| **Total** | **92** |
+
+Todas las pruebas finalizaron correctamente, sin fallos.
+
+Además de estas pruebas, el proyecto dispone de un script de integración que realiza peticiones HTTP reales contra los servicios desplegados mediante Docker Compose. Su ejecución automatizada se realiza desde el workflow de GitHub Actions.
 
 Estas pruebas verifican la disponibilidad de los servicios, la creación de recursos y la validación de las relaciones entre vehículos, mantenimientos, reglas y tareas.
 
@@ -380,6 +455,12 @@ Las ejecuciones del pipeline pueden consultarse en:
 Los paquetes publicados están disponibles en:
 
 [GitHub Packages — MiGaraje](https://github.com/MercheLorenzo?tab=packages)
+
+La ejecución del workflow correspondiente a la validación del Hito 2 finalizó correctamente, con **16 de 16 jobs superados**.
+
+Puede consultarse el historial de ejecuciones en [GitHub Actions — MiGaraje](https://github.com/MercheLorenzo/MiGaraje/actions).
+
+También se puede consultar el [repositorio de imágenes publicadas en GitHub Packages](https://github.com/MercheLorenzo?tab=packages).
 
 Para obtener más información sobre los jobs, sus herramientas y las validaciones realizadas, consulta [`docs/ci.md`](docs/ci.md).
 
