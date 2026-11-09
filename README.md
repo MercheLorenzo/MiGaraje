@@ -1,5 +1,13 @@
 # MiGaraje — Gestión inteligente del mantenimiento de vehículos
 
+![CI](https://github.com/MercheLorenzo/MiGaraje/actions/workflows/ci.yml/badge.svg)
+![Docker](https://img.shields.io/badge/Docker-passing-2496ED?logo=docker&logoColor=white)
+![GHCR](https://img.shields.io/badge/GHCR-published-181717?logo=github&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-used-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)
+<!--![Terraform](https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white)-->
+
 > Si quieres consultar el README entregado originalmente para el Hito 1, puedes acceder a él [aquí](docs/hito1readme.md).
 
 <p align="center">
