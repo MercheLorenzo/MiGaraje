@@ -4,7 +4,8 @@ import hmac
 import secrets
 from datetime import datetime, timedelta, timezone
 import jwt
-from fastapi import Depends, Header, HTTPException
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.session import get_db
@@ -30,11 +31,13 @@ def create_token(user_id: int, token_version: int=0) -> str:
     now = datetime.now(timezone.utc)
     return jwt.encode({"sub": str(user_id), "ver":token_version, "iat": now, "exp":now+timedelta(hours=8), "iss":"migaraje"}, settings.jwt_secret, algorithm="HS256")
 
-def current_user(authorization: str | None=Header(default=None), db:Session=Depends(get_db)) -> User:
-    if not authorization or not authorization.startswith("Bearer "):
+bearer_scheme = HTTPBearer(auto_error=False, description="Pega el token devuelto por /api/auth/login o /api/auth/register (sin escribir Bearer).")
+
+def current_user(credentials: HTTPAuthorizationCredentials | None=Depends(bearer_scheme), db:Session=Depends(get_db)) -> User:
+    if not credentials or credentials.scheme.lower() != "bearer":
         raise HTTPException(401, "Inicia sesión para continuar", headers={"WWW-Authenticate":"Bearer"})
     try:
-        payload = jwt.decode(authorization[7:], settings.jwt_secret, algorithms=["HS256"], issuer="migaraje")
+        payload = jwt.decode(credentials.credentials, settings.jwt_secret, algorithms=["HS256"], issuer="migaraje")
         user = db.get(User, int(payload["sub"]))
         if user and user.token_version != payload.get("ver"):
             user = None

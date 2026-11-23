@@ -12,7 +12,7 @@ El punto de entrada del navegador a los servicios de MiGaraje. Se ha añadido al
 - Estadísticas `/api/statistics/{summary|monthly|categories|comparison}` y notificaciones `/api/notifications`.
 - Endpoint interno de cuentas `/internal/users`, protegido por `X-Internal-Key`, para el escáner de recordatorios.
 
-Los endpoints están documentados en `http://localhost:8090/docs` al ejecutar Docker Compose. El navegador no debe consultar directamente los servicios de negocio.
+Los endpoints están documentados en `http://localhost:8090/docs` al ejecutar Docker Compose. Los recursos se exponen en rutas individuales (sin `/{kind}`), con esquemas de solicitud/respuesta, filtros y autenticación **HTTP Bearer** mediante el botón **Authorize**. Consulta [la guía de pruebas](../../docs/API_REST_SWAGGER.md). El navegador no debe consultar directamente los servicios de negocio.
 
 ## Configuración
 
