@@ -1,3 +1,4 @@
+from datetime import date
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -39,3 +40,9 @@ class Vehicle(Base):
         nullable=False,
         default=0,
     )
+
+    vehicle_type: Mapped[str] = mapped_column(String(32), default="car", nullable=False)
+    fuel_type: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    registration_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+    nickname: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)

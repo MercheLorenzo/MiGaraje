@@ -6,6 +6,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.routes.vehicles import router as vehicles_router
+from app.core.internal_auth import require_internal_key
 from app.core.config import settings
 from app.db.session import engine
 from app.models.vehicle import Vehicle  # Registra el modelo
@@ -32,6 +33,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.middleware("http")(require_internal_key)
 
 app.include_router(vehicles_router)
 

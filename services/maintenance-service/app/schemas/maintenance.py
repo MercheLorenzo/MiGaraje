@@ -12,6 +12,12 @@ class MaintenanceCreate(BaseModel):
     description: str = Field(min_length=1)
     cost: Decimal = Field(ge=0, max_digits=10, decimal_places=2)
     products_used: str | None = None
+    workshop: str | None = Field(default=None,max_length=120)
+    parts_cost: Decimal | None = Field(default=None,ge=0,max_digits=10,decimal_places=2)
+    labor_cost: Decimal | None = Field(default=None,ge=0,max_digits=10,decimal_places=2)
+    part_brand: str | None = Field(default=None,max_length=120)
+    part_model: str | None = Field(default=None,max_length=120)
+    notes: str | None = None
 
 
 class MaintenanceUpdate(MaintenanceCreate):

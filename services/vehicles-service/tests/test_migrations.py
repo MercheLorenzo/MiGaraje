@@ -43,6 +43,6 @@ def test_fresh_database_can_be_initialized_with_alembic(tmp_path):
                 text("SELECT version_num FROM alembic_version")
             ).scalar_one()
 
-        assert revision == "525b7cab1097"
+        assert revision == "002_vehicle_details"
     finally:
         engine.dispose()

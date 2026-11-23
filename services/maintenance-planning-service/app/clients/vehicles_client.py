@@ -1,4 +1,5 @@
 import httpx
+import os
 
 from app.core.config import settings
 
@@ -15,7 +16,7 @@ def verify_vehicle_exists(vehicle_id: int) -> None:
     url = f"{settings.vehicles_service_url.rstrip('/')}/vehicles/{vehicle_id}"
 
     try:
-        response = httpx.get(url, timeout=5.0)
+        response = httpx.get(url, **({"headers":{"X-Internal-Key":os.getenv("INTERNAL_API_KEY")}} if os.getenv("INTERNAL_API_KEY") else {}), timeout=5.0)
     except httpx.RequestError as exc:
         raise VehicleServiceUnavailableError from exc
 
