@@ -1,205 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta
-        name="description"
-        content="MiGaraje: historial y planificación del mantenimiento de tus vehículos"
-    >
-
-    <title>MiGaraje | Tu vehículo, siempre al día</title>
-
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c35">
+  <meta name="description" content="MiGaraje: gestiona tus vehículos, mantenimientos, avisos y gastos desde una sola aplicación.">
+  <title>MiGaraje · Tu garaje digital</title>
+  <link rel="icon" href="MiGaraje.png" type="image/png">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js" defer></script>
 </head>
-
 <body>
-    <!-- Cabecera y navegación -->
-    <header>
-        <div class="wrap nav">
-            <a class="brand" href="#" aria-label="MiGaraje, inicio">
-                <img src="MiGaraje.png" alt="Logo de MiGaraje">
-                <span>MiGaraje</span>
-            </a>
-
-            <nav class="links" aria-label="Navegación principal">
-                <a href="#servicios">Servicios</a>
-                <a href="#sobre">Qué puedes hacer</a>
-                <a class="btn navbtn" href="#servicios">
-                    Entrar <span>↗</span>
-                </a>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <!-- Presentación principal -->
-        <section class="hero">
-            <div class="wrap hero-grid">
-                <div>
-                    <div class="pill">
-                        <span class="dot"></span>
-                        Tu vehículo, siempre al día
-                    </div>
-
-                    <h1>
-                        Cuida tu coche.<br>
-                        <em>No olvides nada.</em>
-                    </h1>
-
-                    <p>
-                        Guarda el historial de tus mantenimientos, controla
-                        tus gastos y planifica las próximas revisiones.
-                        Todo lo que tu vehículo necesita, en un solo lugar.
-                    </p>
-
-                    <div class="actions">
-                        <a class="btn" href="#servicios">
-                            Explorar servicios <span>→</span>
-                        </a>
-
-                        <a class="btn light" href="#sobre">
-                            Descubrir MiGaraje
-                        </a>
-                    </div>
-
-                    <div class="note">
-                        Más organización para ti. Más cuidado para tu vehículo.
-                    </div>
-                </div>
-
-                <!-- Logotipo destacado -->
-                <div class="logo-stage">
-                    <div class="halo"></div>
-
-                    <div class="logo-card">
-                        <img
-                            src="MiGaraje.png"
-                            alt="Logotipo de MiGaraje: garaje, coche y llave inglesa"
-                        >
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Acceso a los microservicios -->
-        <section class="section" id="servicios">
-            <div class="wrap">
-                <div class="heading">
-                    <div class="kicker">Tu garaje digital</div>
-
-                    <h2>¿Qué necesitas hacer hoy?</h2>
-
-                    <p>
-                        Accede directamente al servicio que necesitas.
-                        Cada módulo se ocupa de una parte de la gestión
-                        de tu vehículo.
-                    </p>
-                </div>
-
-                <div class="cards">
-                    <!-- Servicio de vehículos -->
-                    <article class="card">
-                        <div class="ico" aria-hidden="true">🚘</div>
-
-                        <h3>Vehículos</h3>
-
-                        <p>
-                            Registra tus vehículos y consulta sus datos
-                            para tener toda la información básica organizada.
-                        </p>
-
-                        <a
-                            class="card-link"
-                            href="http://localhost:8000/docs"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Abrir servicio →
-                        </a>
-
-                        <span class="url">API · localhost:8000</span>
-                    </article>
-
-                    <!-- Servicio de mantenimientos -->
-                    <article class="card">
-                        <div class="ico" aria-hidden="true">🔧</div>
-
-                        <h3>Mantenimientos</h3>
-
-                        <p>
-                            Registra reparaciones e intervenciones con fecha,
-                            kilometraje, detalles y coste.
-                        </p>
-
-                        <a
-                            class="card-link"
-                            href="http://localhost:8001/docs"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Abrir servicio →
-                        </a>
-
-                        <span class="url">API · localhost:8001</span>
-                    </article>
-
-                    <!-- Servicio de planificación -->
-                    <article class="card">
-                        <div class="ico" aria-hidden="true">🗓️</div>
-
-                        <h3>Planificación</h3>
-
-                        <p>
-                            Define reglas de mantenimiento y organiza
-                            las próximas tareas por fecha o kilometraje.
-                        </p>
-
-                        <a
-                            class="card-link"
-                            href="http://localhost:8002/docs"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Abrir servicio →
-                        </a>
-
-                        <span class="url">API · localhost:8002</span>
-                    </article>
-                </div>
-            </div>
-        </section>
-
-        <!-- Llamada a la acción -->
-        <section class="band" id="sobre">
-            <div class="wrap">
-                <div class="band-inner">
-                    <div>
-                        <h2>El mantenimiento, bajo control.</h2>
-
-                        <p>
-                            Consulta lo que has hecho y prepara lo que viene
-                            después.
-                        </p>
-                    </div>
-
-                    <a class="btn" href="#servicios">
-                        Empezar ahora →
-                    </a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Pie de página -->
-    <footer>
-        <div class="wrap foot">
-            <strong>MiGaraje</strong>
-
-            <span>Cuida tu vehículo, sin olvidos.</span>
-
-            <span>Proyecto académico · Mercedes L.A. · Cloud Computing</span>
-        </div>
-    </footer>
+  <div class="app-shell" id="appShell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top"><a href="#dashboard" class="brand" aria-label="MiGaraje inicio"><span class="brand-icon">M<span class="brand-dot">.</span></span><span>MiGaraje<small>Tu espacio motor</small></span></a><button class="icon-button mobile-close" id="closeMenu" aria-label="Cerrar menú">×</button></div>
+      <div class="nav-caption">ESPACIO PERSONAL</div>
+      <nav class="main-nav" aria-label="Secciones de la aplicación">
+        <button data-view="dashboard" class="nav-item active"><span>◫</span> Resumen</button>
+        <button data-view="vehicles" class="nav-item"><span>🚘</span> Mis vehículos</button>
+        <button data-view="maintenances" class="nav-item"><span>🔧</span> Historial</button>
+        <button data-view="rules" class="nav-item"><span>↻</span> Reglas periódicas</button>
+        <button data-view="tasks" class="nav-item"><span>☑</span> Próximas tareas</button>
+        <button data-view="calendar" class="nav-item"><span>▦</span> Calendario</button>
+        <button data-view="statistics" class="nav-item"><span>▥</span> Estadísticas</button>
+      </nav>
+      <div class="nav-caption spacing">TU CUENTA</div>
+      <nav class="main-nav" aria-label="Cuenta y preferencias">
+        <button data-view="notifications" class="nav-item"><span>♧</span> Notificaciones <b id="navUnread" class="nav-unread" hidden>0</b></button>
+        <button data-view="profile" class="nav-item"><span>◉</span> Mi perfil</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="sidebar-tip"><strong>Un vehículo bien cuidado</strong><p>Empieza registrando un vehículo y sus próximas revisiones.</p></div><div class="sidebar-account"><span class="avatar" id="sideAvatar">U</span><span class="account-name"><b id="sideName">Usuario</b><small id="sideEmail"></small></span><button id="logoutButton" class="icon-button" title="Cerrar sesión" aria-label="Cerrar sesión">↪</button></div></div>
+    </aside>
+    <div class="main-area"><header class="topbar"><button id="menuButton" class="icon-button hamburger" aria-label="Abrir menú">☰</button><div class="breadcrumb">MiGaraje <span>/</span> <strong id="crumb">Resumen</strong></div><div class="top-actions"><span class="top-date" id="today"></span><button class="notification-button" data-view="notifications" aria-label="Ver notificaciones">♧<span id="headerUnread" hidden></span></button><button class="user-chip" data-view="profile"><span id="topAvatar" class="avatar">U</span><span id="topName">Usuario</span></button></div></header>
+      <main class="content" id="mainContent"><section class="page-heading"><div><div class="eyebrow" id="viewEyebrow">TU ESPACIO</div><h1 id="viewTitle">Resumen de tu garaje</h1><p id="viewSubtitle">Toda tu información en un solo lugar.</p></div><div class="heading-actions" id="viewActions"></div></section><div id="viewContent" aria-live="polite"></div></main>
+      <footer class="app-footer">MiGaraje · Proyecto Cloud Computing UGR · Mercedes Lorenzo Aragón <span>La información del mantenimiento debe contrastarse con el fabricante.</span></footer>
+    </div>
+  </div>
+  <section class="auth-layout" id="authScreen" aria-label="Acceso a MiGaraje"><div class="auth-promo"><div class="auth-brand">M<span>.</span> <small>MiGaraje</small></div><div class="auth-promo-content"><span class="promo-pill">EL CONTROL EN TUS MANOS</span><h1>Tu garaje,<br><em>a tu manera.</em></h1><p>Organiza tus vehículos, no olvides una revisión y descubre cuánto cuesta mantenerlos. Todo conectado, todo en su sitio.</p><div class="promo-features"><span>✓ Historial completo</span><span>✓ Revisiones organizadas</span><span>✓ Gastos y estadísticas</span></div></div><div class="promo-foot">Proyecto Cloud Computing · Universidad de Granada</div></div><div class="auth-side"><div class="auth-panel"><div class="auth-mobile-brand">M<span>.</span> MiGaraje</div><div class="auth-tabs" role="tablist" aria-label="Acceso"><button id="tabLogin" class="selected" type="button">Iniciar sesión</button><button id="tabRegister" type="button">Crear cuenta</button></div><h2 id="authTitle">Qué bien tenerte aquí.</h2><p id="authSubtitle">Inicia sesión para acceder a tu garaje digital.</p><form id="authForm"><div class="auth-name" id="authNameRow" hidden><label for="authName">Nombre completo</label><input id="authName" name="full_name" placeholder="Tu nombre" minlength="2" autocomplete="name"></div><label for="authEmail">Correo electrónico</label><input id="authEmail" name="email" type="email" placeholder="nombre@correo.com" autocomplete="email" required><label for="authPassword">Contraseña</label><input id="authPassword" name="password" type="password" placeholder="Mínimo 10 caracteres" minlength="10" required autocomplete="current-password"><p class="auth-error" id="authError" role="alert" hidden></p><button class="btn primary auth-submit" id="authSubmit" type="submit">Entrar a mi garaje <span>→</span></button></form><p class="auth-legal">Tus datos se guardan en tu instalación de MiGaraje. No utilizamos servicios externos de análisis de actividad.</p></div></div></section>
+  <div id="modalRoot"></div><div id="toastRoot" class="toast-root" role="status" aria-live="polite"></div>
 </body>
 </html>
