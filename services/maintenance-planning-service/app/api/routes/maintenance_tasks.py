@@ -17,7 +17,10 @@ from app.services.maintenance_task_service import (
     complete_task,
     create_task,
     get_task,
+    delete_task,
+    update_task,
     list_tasks,
+    refresh_task_statuses,
 )
 
 router = APIRouter(
@@ -72,7 +75,10 @@ def list_all(
     ),
     db: Session = Depends(get_db),
 ):
-    return list_tasks(db, vehicle_id, task_status)
+    try:
+        return list_tasks(db, vehicle_id, task_status)
+    except VehicleServiceUnavailableError as exc:
+        raise handle_vehicle_error(exc) from exc
 
 
 @router.get("/{task_id}", response_model=MaintenanceTaskResponse)
@@ -81,7 +87,11 @@ def get_one(
     db: Session = Depends(get_db),
 ):
     try:
-        return get_task(db, task_id)
+        task = get_task(db, task_id)
+        refresh_task_statuses(db, [task])
+        return task
+    except VehicleServiceUnavailableError as exc:
+        raise handle_vehicle_error(exc) from exc
     except MaintenanceTaskNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -110,3 +120,20 @@ def mark_completed(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Tarea de mantenimiento no encontrada.",
         ) from None
+
+
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete(task_id: int, db: Session = Depends(get_db)):
+    try:
+        delete_task(db, task_id)
+    except MaintenanceTaskNotFoundError:
+        raise HTTPException(status_code=404, detail="Tarea no encontrada") from None
+
+
+@router.put("/{task_id}",response_model=MaintenanceTaskResponse)
+def update(task_id:int,data:MaintenanceTaskCreate,db:Session=Depends(get_db)):
+    try:return update_task(db,task_id,data)
+    except MaintenanceTaskNotFoundError:raise HTTPException(404,"Tarea no encontrada") from None
+    except MaintenanceRuleReferenceError:raise HTTPException(422,"La regla no pertenece al vehículo") from None
+    except ValueError as exc:raise HTTPException(409,str(exc)) from exc
+    except (VehicleNotFoundError,VehicleServiceUnavailableError) as exc:raise handle_vehicle_error(exc) from exc

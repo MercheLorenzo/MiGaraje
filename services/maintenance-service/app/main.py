@@ -6,6 +6,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.routes.maintenance import router as maintenance_router
+from app.core.internal_auth import require_internal_key
 from app.core.config import settings
 from app.db.session import Base, engine
 from app.models.maintenance import Maintenance
@@ -32,6 +33,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.middleware("http")(require_internal_key)
 
 app.include_router(maintenance_router)
 

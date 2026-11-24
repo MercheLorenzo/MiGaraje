@@ -53,3 +53,10 @@ class Maintenance(Base):
         Text,
         nullable=True,
     )
+
+    workshop: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    parts_cost: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    labor_cost: Mapped[Decimal | None] = mapped_column(Numeric(10, 2), nullable=True)
+    part_brand: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    part_model: Mapped[str | None] = mapped_column(String(120), nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)

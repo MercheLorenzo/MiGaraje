@@ -44,3 +44,8 @@ def save(db: Session, task: MaintenanceTask) -> MaintenanceTask:
     db.commit()
     db.refresh(task)
     return task
+
+
+def delete(db: Session, task: MaintenanceTask) -> None:
+    db.delete(task)
+    db.commit()

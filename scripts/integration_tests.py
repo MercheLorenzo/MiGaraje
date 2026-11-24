@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 import uuid
 from urllib.error import HTTPError, URLError
@@ -22,7 +23,7 @@ def request(method, url, payload=None):
         url,
         data=data,
         method=method,
-        headers={"Content-Type": "application/json"},
+        headers={"Content-Type": "application/json", "X-Internal-Key": os.getenv("INTERNAL_API_KEY", "")},
     )
 
     try:

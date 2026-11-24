@@ -68,6 +68,14 @@ def client(monkeypatch):
         vehicle_exists,
     )
 
+    # Los endpoints de listado deben usar kilómetros reales; en pruebas se
+    # simula vehicles-service para no depender de red ni de Docker.
+    monkeypatch.setattr(
+        maintenance_task_service,
+        "get_vehicle_mileages",
+        lambda: {1: 50000, 2: 50000},
+    )
+
     test_client = TestClient(app)
 
     try:

@@ -6,6 +6,7 @@ from sqlalchemy import text
 
 from app.api.routes.maintenance_rules import router as rules_router
 from app.api.routes.maintenance_tasks import router as tasks_router
+from app.core.internal_auth import require_internal_key
 from app.core.config import settings
 from app.db.session import engine
 
@@ -31,6 +32,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.middleware("http")(require_internal_key)
 
 app.include_router(rules_router)
 app.include_router(tasks_router)

@@ -6,10 +6,13 @@ from app.clients.vehicles_client import (
     VehicleServiceUnavailableError,
 )
 from app.db.session import get_db
+from app.services.scheduling_service import generate_task
+from app.schemas.maintenance_task import MaintenanceTaskResponse
 from app.schemas.maintenance_rule import (
     MaintenanceRuleCreate,
     MaintenanceRuleResponse,
     MaintenanceRuleUpdate,
+
 )
 from app.services.maintenance_rule_service import (
     MaintenanceRuleNotFoundError,
@@ -114,3 +117,12 @@ def delete(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Regla de mantenimiento no encontrada.",
         ) from None
+
+
+@router.post("/{rule_id}/generate",status_code=201)
+def generate(rule_id:int,db:Session=Depends(get_db)):
+    try:rule=get_rule(db,rule_id)
+    except MaintenanceRuleNotFoundError:raise HTTPException(404,"Regla no encontrada") from None
+    task=generate_task(db,rule)
+    if not task:raise HTTPException(422,"Configura kilometraje o fecha de última realización para calcular el vencimiento")
+    return MaintenanceTaskResponse.model_validate(task)
