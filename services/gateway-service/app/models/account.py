@@ -9,6 +9,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(254), unique=True, index=True)
     full_name: Mapped[str] = mapped_column(String(120))
     password_hash: Mapped[str] = mapped_column(String(512))
+    role: Mapped[str] = mapped_column(String(16), nullable=False, default="user", server_default="user")
     token_version: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda:datetime.now(timezone.utc))
 

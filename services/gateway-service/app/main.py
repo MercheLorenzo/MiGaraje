@@ -5,6 +5,7 @@ from sqlalchemy import select,text
 from app.core.config import settings
 from app.db.session import engine,SessionLocal
 from app.models.account import User,VehicleOwner
+from app.api.routes.admin import router as admin_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.insights import router as insights_router
 from app.api.routes.resources import router as resources_router
@@ -15,8 +16,9 @@ app=FastAPI(
     description=("API REST pública de MiGaraje. Regístrate o inicia sesión en **Auth y perfil**, "
                  "copia el campo `token` y pulsa **Authorize** (HTTP Bearer) para probar "
                  "vehículos, mantenimientos, reglas, tareas, estadísticas y notificaciones. "
-                 "Los recursos están aislados por usuario. No pegues claves internas en Swagger."),
+                 "Los recursos normales están aislados por usuario; los reportes globales requieren rol admin. No pegues claves internas en Swagger."),
     openapi_tags=[
+        {"name": "Administración", "description": "Consultas globales de solo lectura, exclusivas del administrador"},
         {"name": "Auth y perfil", "description": "Cuenta, inicio de sesión y datos personales"},
         {"name": "Vehículos", "description": "Crear, listar, actualizar y eliminar vehículos propios"},
         {"name": "Mantenimientos", "description": "Historial de intervenciones y sus costes"},
@@ -29,6 +31,7 @@ app=FastAPI(
 )
 app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:8080","http://localhost:8081"],allow_methods=["GET","POST","PUT","PATCH","DELETE","OPTIONS"],allow_headers=["Authorization","Content-Type"],allow_credentials=False)
 app.include_router(auth_router)
+app.include_router(admin_router)
 app.include_router(insights_router)
 app.include_router(resources_router)
 
