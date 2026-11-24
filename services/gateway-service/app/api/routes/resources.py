@@ -82,7 +82,10 @@ def delete_owned(kind: str, record_id: int, user: User, db: Session):
         tasks = call("planning", "GET", "/maintenance-tasks", params={"vehicle_id": old["vehicle_id"]})
         for task in tasks:
             if task["rule_id"] == record_id:
+                call("notifications", "DELETE", f"/notifications/{user.id}/task/{task['id']}")
                 call("planning", "DELETE", f"/maintenance-tasks/{task['id']}")
+    if kind == "tasks":
+        call("notifications", "DELETE", f"/notifications/{user.id}/task/{record_id}")
     service, path = KINDS[kind]
     return call(service, "DELETE", f"{path}/{record_id}")
 
@@ -122,7 +125,8 @@ def update_vehicle(vehicle_id: int, body: VehicleIn, user: User = Depends(curren
 @router.delete("/vehicles/{vehicle_id}", tags=["Vehículos"], summary="Eliminar vehículo y sus registros", status_code=204)
 def remove_vehicle(vehicle_id: int, user: User = Depends(current_user), db: Session = Depends(get_db)):
     assert_owned(db, user, vehicle_id)
-    # Eliminar recursos vinculados antes de suprimir el vehículo.
+    # Eliminar avisos del usuario antes de retirar el vehículo y sus registros.
+    call("notifications", "DELETE", f"/notifications/{user.id}/vehicle/{vehicle_id}")
     for task in call("planning", "GET", "/maintenance-tasks", params={"vehicle_id": vehicle_id}):
         call("planning", "DELETE", f"/maintenance-tasks/{task['id']}")
     for rule in call("planning", "GET", "/maintenance-rules", params={"vehicle_id": vehicle_id}):

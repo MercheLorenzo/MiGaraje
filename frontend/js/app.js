@@ -14,7 +14,18 @@
   const vehicleName = id => {const v=state.vehicles.find(v=>v.id===id);return v?`${v.nickname || (v.brand+' '+v.model)}`:`Vehículo #${id}`;};
   const typeName = s => ({oil_change:'Cambio de aceite',inspection:'Revisión',itv:'ITV',brakes:'Frenos',tires:'Neumáticos',repair:'Reparación',filters:'Filtros',other:'Otro'}[s]||s||'Mantenimiento');
   const statusName = s => ({pending:'Pendiente',upcoming:'Próxima',overdue:'Vencida',completed:'Completada'}[s]||s);
-  const taskState = t => {if(t.status==='completed')return 'completed';if(t.due_date){const a=new Date(t.due_date+'T12:00:00');const now=new Date(localDate()+'T12:00:00');const d=Math.round((a-now)/86400000);if(d<0)return 'overdue';if(d<=30)return 'upcoming';}const v=state.vehicles.find(v=>v.id===t.vehicle_id);if(v&&t.due_mileage!==null&&t.due_mileage!==undefined){if(v.current_mileage>t.due_mileage)return 'overdue';if(v.current_mileage>=t.due_mileage-1000)return 'upcoming';}return 'pending';};
+  const taskState = t => {
+    if (t.status === 'completed') return 'completed';
+    const now = new Date(localDate() + 'T12:00:00');
+    const days = t.due_date ? Math.round((new Date(t.due_date + 'T12:00:00') - now) / 86400000) : null;
+    const vehicle = state.vehicles.find(v => v.id === t.vehicle_id);
+    const km = vehicle ? Number(vehicle.current_mileage) : null;
+    const limit = t.due_mileage == null ? null : Number(t.due_mileage);
+    // La fecha O los km pueden vencer la tarea. «Vencida» gana a «Próxima».
+    if ((days !== null && days < 0) || (km !== null && limit !== null && km > limit)) return 'overdue';
+    if ((days !== null && days <= 30) || (km !== null && limit !== null && km >= limit - 1000)) return 'upcoming';
+    return 'pending';
+  };
   const busy = '<div class="loading">Cargando tus datos…</div>';
   const empty = (icon,title,subtitle,button='') => `<div class="empty"><div class="empty-icon">${icon}</div><strong>${title}</strong><p>${subtitle}</p>${button}</div>`;
   const btn = (label,action,id='',variant='outline') => `<button type="button" class="btn tiny ${variant}" data-action="${action}" data-id="${esc(id)}">${label}</button>`;

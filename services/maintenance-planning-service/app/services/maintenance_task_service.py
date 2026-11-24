@@ -1,11 +1,12 @@
-from datetime import date, timedelta
+from datetime import date
 
 from sqlalchemy.orm import Session
 
-from app.clients.vehicles_client import verify_vehicle_exists
+from app.clients.vehicles_client import get_vehicle_mileages, verify_vehicle_exists
 from app.models.maintenance_task import MaintenanceTask
 from app.models.maintenance_rule import MaintenanceRule
 from app.services.scheduling_service import generate_task
+from app.services.task_status import calculate_task_status
 from app.repositories import maintenance_rule_repository
 from app.repositories import maintenance_task_repository as repository
 from app.schemas.maintenance_task import MaintenanceTaskCreate
@@ -34,26 +35,45 @@ def create_task(
     return repository.create(db, data)
 
 
+def refresh_task_statuses(db: Session, tasks: list[MaintenanceTask]) -> None:
+    """Sincroniza el estado almacenado con fecha y kilometraje actuales.
+
+    La consulta HTTP se hace una sola vez y solamente si hay tareas abiertas
+    con vencimiento por km. Si el servicio de vehículos falla, no persistimos
+    estados posiblemente incorrectos: la API devuelve 503.
+    """
+    open_tasks = [task for task in tasks if task.status != "completed"]
+    if not open_tasks:
+        return
+
+    mileages = (
+        get_vehicle_mileages()
+        if any(task.due_mileage is not None for task in open_tasks)
+        else {}
+    )
+    today = date.today()
+    changed = False
+    for task in open_tasks:
+        new_status = calculate_task_status(
+            task,
+            today=today,
+            current_mileage=mileages.get(task.vehicle_id),
+        )
+        if task.status != new_status:
+            task.status = new_status
+            db.add(task)
+            changed = True
+    if changed:
+        db.commit()
+
+
 def list_tasks(
     db: Session,
     vehicle_id: int | None = None,
     status: str | None = None,
 ) -> list[MaintenanceTask]:
     tasks = repository.get_all(db, vehicle_id, None)
-    today = date.today()
-    for task in tasks:
-        if task.status == "completed":
-            continue
-        if task.due_date and task.due_date < today:
-            new_status = "overdue"
-        elif task.due_date and task.due_date <= today + timedelta(days=30):
-            new_status = "upcoming"
-        else:
-            new_status = "pending"
-        if task.status != new_status:
-            task.status = new_status
-            db.add(task)
-    db.commit()
+    refresh_task_statuses(db, tasks)
     if status:
         tasks = [task for task in tasks if task.status == status]
     return tasks

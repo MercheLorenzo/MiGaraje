@@ -1,6 +1,6 @@
 from datetime import datetime,timedelta,timezone
 from fastapi import APIRouter,Depends,HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.notification import Notification
@@ -47,3 +47,23 @@ def send_test(user_id:int,body:ScanBody,db:Session=Depends(get_db)):
     except Exception as exc:raise HTTPException(503,"No se ha podido enviar el correo de prueba") from exc
     pref.test_sent_at=now;db.commit()
     return {"message":"Correo de prueba enviado"}
+
+
+@router.delete("/{user_id}/vehicle/{vehicle_id}", status_code=204)
+def delete_vehicle_notifications(user_id: int, vehicle_id: int, db: Session = Depends(get_db)):
+    """Limpieza interna al retirar un vehículo del garaje."""
+    db.execute(delete(Notification).where(
+        Notification.user_id == user_id,
+        Notification.vehicle_id == vehicle_id,
+    ))
+    db.commit()
+
+
+@router.delete("/{user_id}/task/{task_id}", status_code=204)
+def delete_task_notifications(user_id: int, task_id: int, db: Session = Depends(get_db)):
+    """Evita avisos obsoletos cuando se elimina una tarea individual."""
+    db.execute(delete(Notification).where(
+        Notification.user_id == user_id,
+        Notification.task_id == task_id,
+    ))
+    db.commit()

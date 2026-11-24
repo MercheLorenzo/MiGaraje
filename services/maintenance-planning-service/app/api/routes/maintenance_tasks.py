@@ -20,6 +20,7 @@ from app.services.maintenance_task_service import (
     delete_task,
     update_task,
     list_tasks,
+    refresh_task_statuses,
 )
 
 router = APIRouter(
@@ -74,7 +75,10 @@ def list_all(
     ),
     db: Session = Depends(get_db),
 ):
-    return list_tasks(db, vehicle_id, task_status)
+    try:
+        return list_tasks(db, vehicle_id, task_status)
+    except VehicleServiceUnavailableError as exc:
+        raise handle_vehicle_error(exc) from exc
 
 
 @router.get("/{task_id}", response_model=MaintenanceTaskResponse)
@@ -83,7 +87,11 @@ def get_one(
     db: Session = Depends(get_db),
 ):
     try:
-        return get_task(db, task_id)
+        task = get_task(db, task_id)
+        refresh_task_statuses(db, [task])
+        return task
+    except VehicleServiceUnavailableError as exc:
+        raise handle_vehicle_error(exc) from exc
     except MaintenanceTaskNotFoundError:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
