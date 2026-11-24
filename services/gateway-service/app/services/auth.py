@@ -48,4 +48,4 @@ def current_user(credentials: HTTPAuthorizationCredentials | None=Depends(bearer
     return user
 
 def user_view(user:User):
-    return {"id":user.id, "email":user.email, "full_name":user.full_name, "created_at":user.created_at}
+    return {"id":user.id, "email":user.email, "full_name":user.full_name, "created_at":user.created_at, "role":user.role}

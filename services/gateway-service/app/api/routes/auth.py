@@ -25,6 +25,7 @@ class PublicUser(BaseModel):
     email: EmailStr
     full_name: str
     created_at: datetime
+    role: str = "user"
 
 class AuthSession(BaseModel):
     token: str

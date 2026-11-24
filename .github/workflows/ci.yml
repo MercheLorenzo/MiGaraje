@@ -189,6 +189,10 @@ jobs:
         env:
           MIGARAJE_E2E_ALLOW_WRITES: "1"
         run: python scripts/e2e_gateway.py
+      - name: Test admin RBAC and global read-only reports
+        env:
+          MIGARAJE_E2E_ALLOW_WRITES: "1"
+        run: python -m scripts.e2e_admin
       - name: Show service logs if integration tests fail
         if: failure()
         run: |

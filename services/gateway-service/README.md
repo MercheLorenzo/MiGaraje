@@ -41,3 +41,13 @@ python -m pytest -q
 ```
 
 **Seguridad:** pensado para ejecución local. Si se publica en Internet es necesario añadir TLS/HTTPS, limitación de solicitudes, revisión de configuración de CORS, gestión robusta de secretos y pruebas adicionales de seguridad.
+
+## Acceso administrativo de solo lectura
+
+La migración Alembic `002_admin_role` añade el campo `users.role`, con `user` como valor inicial para todas las cuentas. Para promover una cuenta existente, ejecutar desde la raíz del proyecto:
+
+```powershell
+docker compose exec gateway-service python -m app.scripts.set_admin --email CORREO@EJEMPLO.COM
+```
+
+El nuevo rol invalida los tokens anteriores. Se debe cerrar sesión y volver a entrar. Todas las operaciones administrativas son GET: `/api/admin/overview`, `/api/admin/users`, `/api/admin/vehicles` y `/api/admin/maintenances`. Las rutas están documentadas en Swagger y comprobadas mediante el rol en el servidor. Consulta `docs/ADMINISTRACION.md` para instalación y pruebas.
