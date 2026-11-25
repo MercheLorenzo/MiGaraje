@@ -23,7 +23,7 @@ try {
 if ($headExit -eq 0) {
   $actualLocation = (aws s3api get-bucket-location --bucket $BucketName --query LocationConstraint --output text).Trim()
   if ($LASTEXITCODE -ne 0 -or $actualLocation -ne $Region) { throw "El bucket existente no está en $Region. No modificar un backend de otra región." }
-  Write-Host "Bucket existente y accesible en $Region: $BucketName"
+  Write-Host "Bucket existente y accesible en ${Region}: $BucketName"
 } else {
   Write-Host "Creando bucket $BucketName en $Region"
   aws s3api create-bucket --bucket $BucketName --region $Region --create-bucket-configuration "LocationConstraint=$Region"
