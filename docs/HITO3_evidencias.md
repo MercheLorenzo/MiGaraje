@@ -4,13 +4,13 @@
 **Proyecto:** MiGaraje — Gestión de vehículos y mantenimientos  
 **Fecha de realización de las pruebas:** 25 de noviembre de 2026  
 **Rama de desarrollo:** `feature/hito3-terraform`  
-**Alcance de esta memoria:** issues **#22, #23, #24, #25 y #26**. La **#27 (teardown y cierre)** se documentará tras su ejecución.
+**Alcance de esta memoria:** issues **#22, #23, #24, #25, #26 y #27**, desde la preparación de Terraform hasta la destrucción controlada y la verificación de limpieza.
 
-> **Estado de la entrega:** infraestructura aprovisionada, aplicación verificada, backend remoto S3 operativo, bloqueo concurrente demostrado y *drift* reconciliado. Las capturas proceden de ejecuciones reales, no de salidas simuladas. Este documento no acredita todavía la destrucción de la infraestructura.
+> **Estado de la entrega:** Hito 3 ejecutado y documentado. Se desplegó y verificó MiGaraje, se demostró el bloqueo remoto de S3, se detectó y corrigió el *drift* y se destruyeron los **20 recursos gestionados por Terraform**. El estado final quedó vacío y se comprobó la limpieza del laboratorio. **Se conserva expresamente el bucket S3 del backend para los hitos 4 y 5.** Las capturas son de ejecuciones reales.
 
 ## 1. Objetivo, alcance y resultado
 
-El Hito 3 consiste en describir y aprovisionar con Terraform una infraestructura reproducible para desplegar MiGaraje en la nube. La solución comprende la red y sus reglas de seguridad, el cómputo, el almacenamiento persistente, el estado remoto de Terraform y una prueba de reconciliación de cambios realizados fuera del código.
+El Hito 3 consiste en describir y aprovisionar con Terraform una infraestructura reproducible para desplegar MiGaraje en la nube. La solución comprende la red y sus reglas de seguridad, el cómputo, el almacenamiento persistente, el estado remoto de Terraform y una prueba de reconciliación de cambios realizados fuera del código y, finalmente, la retirada controlada de los recursos para verificar la reversibilidad del aprovisionamiento.
 
 Se ha utilizado **Amazon Web Services (AWS)** en **Estocolmo, Suecia (`eu-north-1`)**, región de la Unión Europea permitida por el proyecto gratuito de AWS. En la fecha de las pruebas se disponía de un **AWS Free Plan con 100 USD de créditos promocionales**. El uso de EC2, EBS, S3 e IPv4 pública puede consumir estos créditos: **elegibilidad Free Tier no equivale a coste cero**.
 
@@ -26,6 +26,9 @@ Se ha utilizado **Amazon Web Services (AWS)** en **Estocolmo, Suecia (`eu-north-
 | Estado remoto | S3 privado con SSE-S3, versionado y `use_lockfile = true` |
 | Bloqueo | Segundo proceso rechazado con `Error acquiring the state lock` y error S3 HTTP 412 |
 | Reconciliación | Etiqueta modificada manualmente; `apply` revierte un cambio y `plan` final indica `No changes` |
+| Teardown (Issue #27) | `Plan: 0 to add, 0 to change, 20 to destroy` y `Destroy complete! Resources: 20 destroyed` |
+| Verificación de limpieza | Estado Terraform vacío; plan de destrucción sin objetos; EC2 `terminated`; sin volúmenes EBS, VPC ni SG del laboratorio en las consultas realizadas |
+| Backend después de destruir | Bucket S3 privado conservado deliberadamente para reutilizar el estado remoto en los hitos 4 y 5 |
 
 **Figura 1.** Terraform valida la configuración HCL y el esquema de los proveedores.
 
@@ -175,7 +178,7 @@ findmnt /mnt/migaraje-data
 
 ![Cifrado de EBS](evidencias_hito3/cifrado_volumen.png)
 
-**Resultado #24:** infraestructura EC2 y persistencia operativas; el frontend, gateway y contenedores están saludables, con Docker sobre EBS. **Limitación:** la persistencia está ligada al volumen EBS, que se eliminará en `terraform destroy`; no existe alta disponibilidad ni base de datos administrada.
+**Resultado #24:** infraestructura EC2 y persistencia operativas; el frontend, gateway y contenedores están saludables, con Docker sobre EBS. **Limitación:** la persistencia estaba ligada al volumen EBS, eliminado posteriormente con `terraform destroy` durante la Issue #27; no se implementó alta disponibilidad ni base de datos administrada.
 
 ## 6. Issue #25 — Estado remoto S3 y bloqueo concurrente
 
@@ -261,7 +264,99 @@ El experimento modifica **solo una etiqueta de EC2**, para no alterar conectivid
 
 **Interpretación:** Terraform **no es un reconciliador continuo por sí solo**; al ejecutar `plan` detecta divergencias entre configuración y recursos reales, y mediante `apply` restablece el estado deseado. Se ha demostrado el patrón de reconciliación de forma controlada, sin sustituir ni recrear la instancia.
 
-## 8. Trazabilidad por issue y evidencias
+## 8. Issue #27 — Teardown controlado, verificación y cierre
+
+### 8.1. Objetivo y precauciones
+
+El objetivo de la Issue #27 es demostrar que una infraestructura creada mediante IaC puede retirarse de forma reproducible, comprobar que **no quedan recursos gestionados por Terraform** y distinguir los componentes que deben eliminarse de los que se conservarán intencionadamente. Esta operación se realizó después de recoger las evidencias del despliegue y de los experimentos de las issues #22–#26. Los datos de PostgreSQL en el disco EBS formaban parte del entorno de pruebas y **no se conservaron al destruir el volumen**.
+
+La destrucción afecta al servidor EC2, los discos EBS, la red VPC, las subredes, el Internet Gateway, el Security Group y los componentes IAM creados para SSM. El **bucket S3 del estado remoto no está gestionado por este Terraform**, por lo que se decidió **conservarlo privado, cifrado y versionado para los hitos 4 y 5**. No se ejecutó un borrado manual del bucket.
+
+### 8.2. Parada de contenedores y comprobación del desmontaje
+
+Se accedió a Ubuntu mediante AWS Systems Manager y se ejecutó la parada ordenada de los servicios:
+
+```bash
+cd /opt/migaraje/app
+sudo docker compose down
+sudo docker compose ps -a
+sudo systemctl stop docker.service docker.socket
+cd /
+sudo umount /mnt/migaraje-data
+findmnt /mnt/migaraje-data
+```
+
+La captura muestra **`[+] down 15/15`**, con contenedores y red Compose retirados, seguida de una tabla vacía al ejecutar `docker compose ps -a`. La comprobación final `findmnt /mnt/migaraje-data` **no devolvió ningún montaje**. En el registro se observa también un segundo intento de `umount` que devolvió `not mounted`; por ello se documenta el **estado final desmontado comprobado**, sin atribuir a ese segundo intento el desmontaje.
+
+**Figura 23.** Parada de los contenedores Docker y verificación del punto de montaje EBS.
+
+![Docker Compose detenido y punto de montaje sin resultado](evidencias_hito3/compose_down.png)
+
+### 8.3. Plan y ejecución de la destrucción
+
+Desde PowerShell, en `infra/terraform/aws/`, con el perfil AWS temporal `migaraje-terraform` y la región `eu-north-1`, se preparó un plan de destrucción:
+
+```powershell
+terraform plan -destroy -var-file ".\terraform.tfvars"
+```
+
+Terraform identificó **20 recursos a destruir**, sin adiciones ni modificaciones: `Plan: 0 to add, 0 to change, 20 to destroy`. El plan correspondía a los recursos de este laboratorio y no incluía el bucket S3 del backend.
+
+**Figura 24.** Plan de destrucción: 20 recursos y ninguna creación o modificación.
+
+![Terraform plan -destroy: 20 to destroy](evidencias_hito3/20toDestroy.png)
+
+Se ejecutó posteriormente:
+
+```powershell
+terraform destroy -var-file ".\terraform.tfvars"
+```
+
+Tras confirmar la operación, Terraform terminó con el resultado **`Destroy complete! Resources: 20 destroyed.`**. Entre los recursos eliminados figura el volumen de datos EBS `migaraje-lab-docker-postgres`, por lo que los datos de PostgreSQL del laboratorio ya no se encuentran en ese disco.
+
+**Figura 25.** Resultado de `terraform destroy`: 20 recursos destruidos.
+
+![Terraform destroy completado](evidencias_hito3/20destroyed.png)
+
+### 8.4. Verificación del estado remoto y de AWS
+
+En primer lugar, se verificó el estado gestionado:
+
+```powershell
+terraform state list
+terraform plan -destroy -var-file ".\terraform.tfvars"
+```
+
+`terraform state list` **no devolvió recursos** y el segundo comando mostró **`No changes. No objects need to be destroyed.`**. Esto acredita que el estado actual de la infraestructura administrada por Terraform ha quedado vacío; el archivo de estado y sus versiones pueden permanecer en el backend S3.
+
+**Figura 26.** Estado vacío y nuevo plan de destrucción sin recursos pendientes.
+
+![Terraform state list vacío y plan -destroy sin cambios](evidencias_hito3/vacio.png)
+
+Se realizaron además comprobaciones de solo lectura contra AWS en `eu-north-1` mediante `describe-instances`, `describe-volumes`, `describe-vpcs` y `describe-security-groups`, utilizando los filtros del laboratorio:
+
+| Recurso comprobado | Resultado observado después de destruir |
+|---|---|
+| EC2 de MiGaraje | Aparece como **`terminated`** en el historial; no está en ejecución |
+| Volúmenes EBS con etiqueta `Project=migaraje` | Consulta sin resultados |
+| VPC con nombre `migaraje-lab-vpc` | Consulta sin resultados |
+| Security Group con nombre `migaraje-lab-sg` | Consulta sin resultados |
+
+**Figura 27.** Consultas AWS tras el teardown: EC2 terminada y sin volúmenes, VPC o SG del laboratorio en las búsquedas realizadas.
+
+![Consultas de recursos AWS después de la destrucción](evidencias_hito3/no_resultados.png)
+
+Estas comprobaciones acreditan la ausencia de los recursos buscados mediante dichos filtros. No equivalen a una auditoría general de todos los posibles recursos de la cuenta (por ejemplo, snapshots manuales ajenos al estado Terraform).
+
+### 8.5. Recursos conservados, costes y posibilidad de redespliegue
+
+**Decisión de conservación:** el bucket S3 privado del backend `migaraje-hito3-state-…-eu-north-1` queda **fuera del ciclo de vida del `terraform destroy` de la aplicación** y se mantiene deliberadamente para los hitos 4 y 5. Conserva versionado, cifrado SSE-S3 y bloqueo de acceso público, según las verificaciones anteriores. Su presencia no contradice el éxito del teardown de los **20 recursos gestionados por Terraform**.
+
+El bucket, sus versiones del archivo `terraform.tfstate` y otras versiones almacenadas **pueden seguir consumiendo créditos**. Se recomienda supervisar AWS Billing y el almacenamiento del bucket. Al finalizar los siguientes hitos, su eliminación requerirá una operación separada y el tratamiento de todas las versiones de objetos. **No se afirma que la cuenta completa haya quedado sin costes ni que el bucket se haya eliminado.**
+
+**Resultado #27:** se acredita la parada ordenada de MiGaraje, la comprobación del volumen desmontado, la destrucción de 20 recursos, el estado Terraform vacío y las consultas sin recursos residuales del laboratorio; se conserva intencionadamente el backend S3 para próximas entregas.
+
+## 9. Trazabilidad por issue y evidencias
 
 | Issue | Requisito | Evidencia principal | Estado acreditado |
 |---|---|---|---|
@@ -270,23 +365,26 @@ El experimento modifica **solo una etiqueta de EC2**, para no alterar conectivid
 | **#24** | EC2, Docker, PostgreSQL, persistencia | `evidencia_20added.png`, `instancia_migaraje.png`, `compose_healthy.png`, `db_volume.png`, `cifrado_volumen.png`, `curl_pagina.png`, `migaraje_18081.png` | Despliegue y salud técnica verificados |
 | **#25** | Estado remoto, versionado, cifrado y bloqueo | `control_versiones_bucket.png`, `bloquear_acceso_publico_bucket.png`, `cifrado.png`, `lock_bloqueado.png` | Protección y bloqueo concurrente demostrados |
 | **#26** | Drift, plan, apply, estado final | `etiquetas.png`, `evidencia_drift.png`, `update_drift.png`, `vuelve_terraform-managed.png`, `nodrift.png` | Reconciliación completada |
+| **#27** | Parada, desmontaje, destrucción y limpieza | `compose_down.png`, `20toDestroy.png`, `20destroyed.png`, `vacio.png`, `no_resultados.png` | Teardown realizado: 20 destruidos; estado vacío; S3 conservado intencionadamente |
 
 La captura complementaria `lista_control_acceso.png` documenta el tratamiento de ACL de S3; no sustituye a `bloquear_acceso_publico_bucket.png`.
 
-## 9. Seguridad, costes y limitaciones
+## 10. Seguridad, costes y limitaciones
 
 - **Credenciales:** autenticación con `aws login` y credenciales temporales; perfil local `migaraje-terraform` configurado mediante `credential_process`. No se incorporaron claves a Git ni al backend Terraform.
 - **Acceso:** administración y visualización mediante SSM; las reglas de entrada del SG están vacías. El frontend escucha en el puerto de la VM, pero no queda publicado hacia Internet por el Security Group.
 - **Datos:** el despliegue comenzó con bases de datos nuevas; la captura del login y los `health checks` no prueban por sí solos la funcionalidad completa de usuario final.
-- **Persistencia:** datos de PostgreSQL en EBS cifrado; una sola EC2 es punto único de fallo. La subred privada no aloja cargas de trabajo en este hito.
-- **Costes:** el Free Plan disponía de créditos, pero EC2, EBS, S3 e IPv4 pueden consumirlos; el gasto y el saldo deben comprobarse en la consola de AWS. No se afirma consumo de 0 USD ni disponibilidad gratuita indefinida.
+- **Persistencia:** durante la ejecución, PostgreSQL utilizó EBS cifrado y una sola EC2, sin alta disponibilidad. En la Issue #27 se destruyeron EC2 y EBS, por lo que esa base de datos de laboratorio dejó de estar disponible.
+- **Costes y recursos restantes:** el Free Plan disponía de créditos, pero EC2, EBS, S3 e IPv4 pueden consumirlos. Tras el teardown no quedan los recursos EC2/EBS/VPC/SG comprobados; **S3 permanece** para los hitos 4 y 5 y su almacenamiento puede consumir créditos. No se afirma consumo de 0 USD ni disponibilidad gratuita indefinida.
 - **Privacidad de evidencias:** antes de subir capturas a un repositorio público, conviene ocultar identificadores de cuenta, IP pública, nombres de sesión y otros metadatos operativos innecesarios. No subir `.env`, estados Terraform, planes binarios ni credenciales.
 
-## 10. Conclusiones y siguiente hito
+## 11. Conclusiones y siguientes hitos
 
-Se ha implementado una infraestructura reproducible para MiGaraje en AWS, verificada mediante pruebas reales. Se ha demostrado la separación de red, el acceso administrativo sin SSH, el despliegue de contenedores con estado saludable, la persistencia cifrada y la protección del estado remoto Terraform. El experimento de *drift* ha confirmado que `plan` identifica la modificación externa y `apply` restaura la configuración declarada; la prueba concurrente confirma el bloqueo de estado mediante S3.
+Se ha implementado, verificado y posteriormente destruido de forma controlada una infraestructura reproducible para MiGaraje en AWS, mediante pruebas reales. Se ha demostrado la separación de red, el acceso administrativo sin SSH, el despliegue de contenedores con estado saludable, la persistencia cifrada y la protección del estado remoto Terraform. El experimento de *drift* ha confirmado que `plan` identifica la modificación externa y `apply` restaura la configuración declarada; la prueba concurrente confirma el bloqueo de estado mediante S3.
 
-**Pendiente fuera del alcance de esta memoria (#27):** desmontaje del volumen, `terraform destroy`, comprobación del estado vacío y de los recursos residuales (incluido el bucket S3, gestionado por separado), así como las capturas finales de limpieza. No se presenta el teardown como completado.
+**Cierre del Hito 3:** la Issue #27 se ha completado con evidencias: `terraform destroy` eliminó **20 recursos**, el estado remoto no contiene recursos activos en la última comprobación y AWS muestra la antigua EC2 como `terminated` sin volúmenes EBS, VPC ni SG del laboratorio en las consultas utilizadas. **Se conserva voluntariamente el bucket S3 privado** (fuera de esos 20 recursos) para reutilizar el backend remoto durante los hitos 4 y 5; se debe vigilar su almacenamiento y el saldo promocional.
+
+**Próximos hitos:** construir el despliegue continuo desde GitHub Actions y continuar la observabilidad y las pruebas de carga. Para volver a desplegar, será necesario generar un nuevo `terraform plan` y ejecutar `apply` utilizando el backend S3 conservado.
 
 **Evidencia complementaria opcional:** captura de GitHub Actions con el workflow de validación Terraform finalizado correctamente; la definición del workflow existe, pero aquí no se afirma su resultado de ejecución.
 
@@ -311,5 +409,10 @@ docs/
     ├── terraform_validate.png
     ├── evidencia_20added.png
     ├── vpc.png
+    ├── 20toDestroy.png
+    ├── 20destroyed.png
+    ├── vacio.png
+    ├── no_resultados.png
+    ├── compose_down.png
     └── ... (resto de capturas citadas)
 ```
