@@ -25,14 +25,14 @@ module "storage" {
 }
 
 module "compute" {
-  source             = "./modules/compute"
-  name_prefix        = local.prefix
-  subnet_id          = module.network.public_subnet_id
-  security_group_id  = module.network.security_group_id
-  instance_type      = var.instance_type
-  root_volume_gib    = var.root_volume_gib
-  drift_marker       = var.drift_marker
-  user_data          = templatefile("${path.module}/templates/cloud-init.sh.tftpl", {
+  source            = "./modules/compute"
+  name_prefix       = local.prefix
+  subnet_id         = module.network.public_subnet_id
+  security_group_id = module.network.security_group_id
+  instance_type     = var.instance_type
+  root_volume_gib   = var.root_volume_gib
+  drift_marker      = var.drift_marker
+  user_data = templatefile("${path.module}/templates/cloud-init.sh.tftpl", {
     volume_id      = module.storage.volume_id
     repository_url = var.repository_url
     repository_ref = var.repository_ref
