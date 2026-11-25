@@ -1,0 +1,7 @@
+# EJEMPLO: el bucket debe existir ANTES de terraform init.
+# Copiar a backend.hcl (ignorado por Git); sustituir bucket por uno propio.
+bucket       = "REEMPLAZAR-POR-BUCKET-S3-UNICO"
+key          = "migaraje/hito3/terraform.tfstate"
+region       = "eu-north-1"
+encrypt      = true
+use_lockfile = true

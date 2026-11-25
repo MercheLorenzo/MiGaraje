@@ -1,0 +1,40 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListStatePrefix",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListBucket"
+      ],
+      "Resource": "arn:aws:s3:::REEMPLAZAR-BUCKET",
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": [
+            "migaraje/hito3/terraform.tfstate",
+            "migaraje/hito3/terraform.tfstate.tflock"
+          ]
+        }
+      }
+    },
+    {
+      "Sid": "ReadAndWriteState",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": "arn:aws:s3:::REEMPLAZAR-BUCKET/migaraje/hito3/terraform.tfstate"
+    },
+    {
+      "Sid": "ReadWriteDeleteLockfile",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::REEMPLAZAR-BUCKET/migaraje/hito3/terraform.tfstate.tflock"
+    }
+  ]
+}

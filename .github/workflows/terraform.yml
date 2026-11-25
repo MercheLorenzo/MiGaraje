@@ -1,0 +1,50 @@
+name: MiGaraje Hito 3 - Terraform validation
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+    paths:
+      - 'infra/terraform/**'
+      - 'scripts/test_hito3_structure.py'
+      - '.github/workflows/terraform.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'infra/terraform/**'
+      - 'scripts/test_hito3_structure.py'
+      - '.github/workflows/terraform.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-validation:
+    name: Terraform fmt, init (sin backend) y validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/terraform/aws
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.11.4'
+
+      - name: Check formatting
+        run: terraform fmt -check -recursive
+
+      - name: Initialize offline from remote backend (no AWS credentials)
+        run: terraform init -backend=false -input=false -no-color
+
+      - name: Validate HCL syntax and provider schema
+        run: terraform validate -no-color
+
+      - name: Check project integration and secret exclusions
+        run: python ../../../scripts/test_hito3_structure.py

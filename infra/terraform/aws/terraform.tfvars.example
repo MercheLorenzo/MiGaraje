@@ -1,0 +1,14 @@
+# Solo valores NO secretos. Copiar a terraform.tfvars (ignorado por Git).
+aws_region          = "eu-north-1"
+project             = "migaraje"
+environment         = "lab"
+# availability_zone = "eu-north-1a"  # Solo si la cuenta dispone de capacidad
+instance_type       = "m7i-flex.large"  # Candidata Free Tier (consume crédito); verificar elegibilidad y cuota antes del apply
+root_volume_gib     = 20
+data_volume_gib     = 20
+repository_url      = "https://github.com/MercheLorenzo/MiGaraje.git"
+repository_ref      = "feature/hito3-terraform"  # Publicar esta rama en GitHub antes de terraform apply
+trusted_ipv4_cidr   = null          # Recomendado: conectar mediante túnel SSM
+# Si es imprescindible acceder por HTTP público durante una demo, usa tu IP /32
+# trusted_ipv4_cidr = "203.0.113.10/32"  # ¡Ejemplo no real!
+drift_marker        = "terraform-managed"

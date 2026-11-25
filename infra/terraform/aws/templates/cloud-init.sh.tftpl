@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# Ejecutado como root por cloud-init; NO insertar secretos en Terraform/user-data.
+set -euo pipefail
+exec > >(tee -a /var/log/migaraje-bootstrap.log | logger -t migaraje-bootstrap) 2>&1
+trap 'echo "[MiGaraje] Fallo de bootstrap en la linea $LINENO" >&2' ERR
+export DEBIAN_FRONTEND=noninteractive
+
+EXPECTED_VOLUME="$(echo '${volume_id}' | tr -d '-')"
+echo "[MiGaraje] Esperando a volumen EBS: ${volume_id}"
+DISK=""
+for attempt in $(seq 1 180); do
+  for device in /dev/nvme*n1 /dev/xvdf; do
+    [ -b "$device" ] || continue
+    serial="$(lsblk -dn -o SERIAL "$device" 2>/dev/null | tr -d ' -' || true)"
+    if [ "$serial" = "$EXPECTED_VOLUME" ] || { [ "$device" = "/dev/xvdf" ] && [ -z "$serial" ]; }; then
+      DISK="$device"
+      break
+    fi
+  done
+  [ -n "$DISK" ] && break
+  sleep 5
+done
+if [ -z "$DISK" ]; then echo "ERROR: no aparece el disco de datos EBS" >&2; exit 1; fi
+
+if ! blkid "$DISK" >/dev/null 2>&1; then
+  echo "[MiGaraje] Formateando disco EBS nuevo (solo si no tiene sistema de archivos)"
+  mkfs.ext4 -F "$DISK"
+fi
+mkdir -p /mnt/migaraje-data
+UUID="$(blkid -s UUID -o value "$DISK")"
+if ! grep -q "UUID=$UUID " /etc/fstab; then
+  echo "UUID=$UUID /mnt/migaraje-data ext4 defaults,nofail 0 2" >> /etc/fstab
+fi
+mountpoint -q /mnt/migaraje-data || mount /mnt/migaraje-data
+chmod 750 /mnt/migaraje-data
+
+apt-get update -y
+apt-get install -y ca-certificates curl git gnupg openssl
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+chmod a+r /etc/apt/keyrings/docker.asc
+. /etc/os-release
+printf 'deb [arch=%s signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu %s stable\n' "$(dpkg --print-architecture)" "$VERSION_CODENAME" > /etc/apt/sources.list.d/docker.list
+apt-get update -y
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Todo el motor Docker (incluido el volumen nombrado postgres_data) utiliza EBS.
+systemctl stop docker.service docker.socket || true
+mkdir -p /etc/docker /etc/systemd/system/docker.service.d
+cat > /etc/docker/daemon.json <<'EOF'
+{"data-root":"/mnt/migaraje-data/docker","log-driver":"local"}
+EOF
+cat > /etc/systemd/system/docker.service.d/10-require-data.conf <<'EOF'
+[Unit]
+RequiresMountsFor=/mnt/migaraje-data
+EOF
+systemctl daemon-reload
+systemctl enable --now docker
+
+mkdir -p /opt/migaraje
+if [ ! -d /opt/migaraje/app/.git ]; then
+  git clone --depth 1 --branch '${repository_ref}' '${repository_url}' /opt/migaraje/app
+fi
+cd /opt/migaraje/app
+
+# Credenciales autogeneradas en el servidor, fuera de Terraform y del repositorio.
+# Persisten en el disco cifrado incluso si se reemplaza la instancia.
+SECRETS=/mnt/migaraje-data/migaraje.env
+if [ ! -f "$SECRETS" ]; then
+  umask 077
+  DB_PASSWORD="$(openssl rand -hex 24)"
+  JWT_KEY="$(openssl rand -hex 32)"
+  INTERNAL_KEY="$(openssl rand -hex 32)"
+  cat > "$SECRETS" <<EOF
+POSTGRES_DB=migaraje
+POSTGRES_USER=migaraje
+POSTGRES_PASSWORD=$DB_PASSWORD
+DATABASE_URL=postgresql+psycopg://migaraje:$DB_PASSWORD@db:5432/migaraje
+VEHICLES_DATABASE_URL=postgresql+psycopg://migaraje:$DB_PASSWORD@db:5432/migaraje_vehicles
+MAINTENANCE_DATABASE_URL=postgresql+psycopg://migaraje:$DB_PASSWORD@db:5432/migaraje_maintenance
+PLANNING_DATABASE_URL=postgresql+psycopg://migaraje:$DB_PASSWORD@db:5432/migaraje_planning
+GATEWAY_DATABASE_URL=postgresql+psycopg://migaraje:$DB_PASSWORD@db:5432/migaraje_gateway
+NOTIFICATIONS_DATABASE_URL=postgresql+psycopg://migaraje:$DB_PASSWORD@db:5432/migaraje_notifications
+VEHICLES_SERVICE_URL=http://vehicles-service:8000
+PLANNING_SERVICE_URL=http://maintenance-planning-service:8002
+JWT_SECRET=$JWT_KEY
+INTERNAL_API_KEY=$INTERNAL_KEY
+NOTIFICATION_INTERVAL_SECONDS=3600
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_FROM=
+EOF
+  chmod 600 "$SECRETS"
+fi
+cp "$SECRETS" /opt/migaraje/app/.env
+chmod 600 /opt/migaraje/app/.env
+
+# No ejecutamos el frontend de desarrollo (8080), solo el Nginx de producción.
+# Reducir builds simultáneas para controlar el consumo RAM en la EC2.
+export COMPOSE_PARALLEL_LIMIT=1
+docker compose config --quiet
+docker compose up -d --build --wait --wait-timeout 900 frontend-production
+
+echo "[MiGaraje] Docker data-root: $(docker info --format '{{.DockerRootDir}}')"
+curl --fail --silent --show-error http://127.0.0.1:8081/ >/dev/null
+curl --fail --silent --show-error http://127.0.0.1:8090/health/ready
+printf '\n[MiGaraje] DESPLIEGUE COMPLETADO. Acceso recomendado por SSM port forwarding.\n'

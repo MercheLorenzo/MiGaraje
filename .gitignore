@@ -55,3 +55,17 @@ storage/
 
 # Docker overrides
 docker-compose.override.yml
+
+# Terraform (Hito 3): estado remoto, planes, credenciales y ficheros generados
+**/.terraform/
+**/.terraform.tfstate.lock.info
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+**/backend.hcl
+**/crash.log
+**/crash.*.log
+# Versionar .terraform.lock.hcl, fija las versiones de proveedores
